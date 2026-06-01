@@ -1,6 +1,6 @@
 # PVZ 融合版 3.6.1 一键修改器
 
-游戏内实现 **极速冷却** 和 **阳光倍率**，不改变数值上限，只加速获取速度，避免游戏异常。
+游戏内实现 **极速冷却** 和 **越花钱，钱越多**（阳光反向增加），不改变数值上限，只加速获取速度，避免游戏异常。
 
 ## 环境准备
 
@@ -47,7 +47,7 @@ uv pip install pymem
 pip install pymem -i https://pypi.tuna.tsinghua.edu.cn/simple
 ```
 
-安装完成后，直接用 `python pvz_fusion_cheats.py` 运行即可（不再需要 `uv run`）。
+安装完成后，直接用 `python pvz_fusion_cheats_v2.py` 运行即可（不再需要 `uv run`）。
 
 ## 使用方法
 
@@ -57,10 +57,10 @@ pip install pymem -i https://pypi.tuna.tsinghua.edu.cn/simple
 
 ### 第二步：运行脚本
 
-将 `pvz_fusion_cheats.py` 放在任意文件夹，在该文件夹打开终端，执行：
+将 `pvz_fusion_cheats_v2.py` 放在任意文件夹，在该文件夹打开终端，执行：
 
 ```bash
-uv run python pvz_fusion_cheats.py
+uv run python pvz_fusion_cheats_v2.py
 ```
 
 首次运行会自动安装依赖，稍等片刻即可。
@@ -70,16 +70,21 @@ uv run python pvz_fusion_cheats.py
 正常输出应显示：
 
 ```
-[+] 已附加游戏
+[+] 已附加游戏，GameAssembly.dll 基址: 0x7ffaceb00000
+[+] 找到冷却时间获取点 @ 0x7ffacf2a3519
+[+] 找到 100.0f 常量 @ 0x7ffaceec6e2d
+[+] 成功通过 VirtualAllocEx 分配代码洞穴 @ 0x7ffaceaa0000
 [+] 冷却加速 ×100 已激活
-[+] 阳光倍率 ×100 已激活
+[+] 找到阳光写入点 @ 0x7ffacf2dbb7b
+[+] 成功通过 VirtualAllocEx 分配代码洞穴 @ 0x7ffacead0000
+[+] 阳光修改 v2 已激活：越花钱，钱越多（patch 了 1 处）
 
 [*] 修改器运行中... 按 Enter 键停止并恢复
 ```
 
 此时：
-- **种植物**：卡片冷却瞬间完成
-- **拾取阳光**：1 个阳光 = 100 阳光
+- **种植物**：卡片冷却瞬间完成。
+- **阳光变动**：不管是**捡到阳光（增加）**还是**种植植物（减少）**，最终阳光值都会**增加**，增加量为变动绝对值的 100 倍，完美实现“越花钱，阳光越多”的逆天效果。
 
 ### 停止修改
 
@@ -94,12 +99,12 @@ uv run python pvz_fusion_cheats.py
 **Q：脚本闪退或报错**
 
 - 检查 uv 是否安装成功：`uv --version`
-- **不要**以**管理员身份**运行终端（部分系统需要管理员权限读写游戏内存，但本脚本不需要）
-- 确认游戏版本是 **融合版3.6.1**
+- 以**管理员身份**运行终端（部分系统需要管理员权限读写游戏内存）
+- 确认游戏版本是 **3.6.1**
 
 **Q：可以改倍率吗？**
 
-可以。用文本编辑器打开 `pvz_fusion_cheats.py`：
+可以。用文本编辑器打开 `pvz_fusion_cheats_v2.py`：
 - 搜索 `100.0`（带小数点），改成你想要的倍数（如 `10.0`、`50.0`）
 - 搜索 `, 100)`，改成你想要的整数倍数（如 `, 10)`、`50)`）
 
