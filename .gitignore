@@ -216,3 +216,13 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# PVZ Fusion game binaries and generated dumps
+/GameAssembly.dll
+/PlantsVsZombiesRH.exe
+/PlantsVsZombiesRH_Data/
+/UnityCrashHandler64.exe
+/UnityPlayer.dll
+/baselib.dll
+/il2cpp.h
+/stringliteral.json
