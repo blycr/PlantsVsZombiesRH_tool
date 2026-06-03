@@ -226,3 +226,9 @@ __marimo__/
 /baselib.dll
 /il2cpp.h
 /stringliteral.json
+
+# C# build artifacts and IDE configurations
+pvz_fusion_cheats_cs/bin/
+pvz_fusion_cheats_cs/obj/
+pvz_fusion_cheats_cs.exe
+.vs/
