@@ -231,4 +231,7 @@ __marimo__/
 pvz_fusion_cheats_cs/bin/
 pvz_fusion_cheats_cs/obj/
 pvz_fusion_cheats_cs.exe
+pvz_fusion_cheats_wpf/bin/
+pvz_fusion_cheats_wpf/obj/
+pvz_fusion_cheats_wpf.exe
 .vs/
