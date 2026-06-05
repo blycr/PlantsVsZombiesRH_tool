@@ -1,90 +1,60 @@
 # 植物大战僵尸融合版 3.6.1 修改器与辅助工具
 
-本工具提供游戏内动态开关极速冷却、阳光越花越多、任意种植与重叠、植物无敌、僵尸一击必杀、特定植物状态加速以及游戏整体速率调节等 7 大核心修改功能。全功能随开随关，安全稳定，且支持多种运行方式以满足不同用户的需求。
+提供游戏内动态开关极速冷却、阳光越花越多、任意种植与重叠、植物无敌、僵尸一击必杀、特定植物状态加速以及游戏整体速率调节等 7 大核心修改功能。
+
+## 下载最新版
+
+请前往 [GitHub Releases 页面](https://github.com/blycr/PlantsVsZombiesRH_tool/releases) 下载最新发布的修改器。
 
 ---
 
-## 快速选择使用方式
+## 运行方式选择
 
-为了方便不同需求的用户，我们提供了以下四种使用方式，您可以直接选择最适合您的一种使用（无需配置其他方式）：
+你可以根据个人需要选择以下任意一种方式运行，无需配置其他形式：
 
-| 运行选项 | 界面形式 | 推荐对象 | 环境依赖 | 对应文件/文件夹 |
-| :--- | :--- | :--- | :--- | :--- |
-| **方式 A（推荐）** | **图形界面修改器 (WPF GUI)** | 普通玩家，喜欢直观鼠标操作 | 无需任何额外配置，直接运行（需 .NET 10 运行库） | [pvz_fusion_cheats_wpf.exe](file:///c:/Users/blycr/Desktop/sth/PC_PVZ-Fusion-3.6.1/pvz_fusion_cheats_wpf.exe) |
-| **方式 B** | **控制台快捷修改器 (C# Console)** | 喜欢终端交互、不想装 Python 的玩家 | 无需任何额外配置，直接运行（需 .NET 10 运行库） | [pvz_fusion_cheats_cs.exe](file:///c:/Users/blycr/Desktop/sth/PC_PVZ-Fusion-3.6.1/pvz_fusion_cheats_cs.exe) |
-| **方式 C** | **Cheat Engine 表格 (CE Table)** | 喜欢使用 CE、想自定义修改或研究内存的玩家 | 需要提前安装 [Cheat Engine](https://www.cheatengine.org/) 软件 | [pvz_fusion_cheats.ct](file:///c:/Users/blycr/Desktop/sth/PC_PVZ-Fusion-3.6.1/pvz_fusion_cheats.ct) |
-| **方式 D** | **Python 源码运行** | 开发者，需要修改逻辑或查看完整实现 | 需要安装 Python 3.12 运行环境 | [pvz_fusion_cheats_v7.py](file:///c:/Users/blycr/Desktop/sth/PC_PVZ-Fusion-3.6.1/pvz_fusion_cheats_v7.py) |
+### 方式 A（推荐）：图形界面修改器 (WPF GUI)
+* **适用人群**：普通玩家，喜欢直观鼠标操作和倍速调节滑块。
+* **下载文件**：在 Release 页面下载 [pvz_fusion_cheats_wpf.exe](file:///c:/Users/blycr/Desktop/sth/PC_PVZ-Fusion-3.6.1/pvz_fusion_cheats_wpf.exe)。
+* **依赖环境**：需要安装 .NET 10 运行库。
+* **使用方法**：进入游戏关卡后，直接运行该程序，在窗口中勾选开关或拖动速率滑块。修改器支持自动以当前用户权限附加游戏进程，免提权。
 
----
+### 方式 B：控制台快捷修改器 (C# Console)
+* **适用人群**：喜欢终端命令行交互但不想配置 Python 的玩家。
+* **下载文件**：在 Release 页面下载 [pvz_fusion_cheats_cs.exe](file:///c:/Users/blycr/Desktop/sth/PC_PVZ-Fusion-3.6.1/pvz_fusion_cheats_cs.exe)。
+* **依赖环境**：需要安装 .NET 10 运行库。
+* **使用方法**：进入游戏关卡后运行程序，根据控制台菜单提示输入对应按键数字控制开关。
 
-## 各方式详细使用指南
+### 方式 C：Cheat Engine 辅助修改 (CE Table)
+* **适用人群**：熟悉 Cheat Engine 的调试与自定义修改玩家。
+* **下载文件**：在 Release 页面下载 [pvz_fusion_cheats.ct](file:///c:/Users/blycr/Desktop/sth/PC_PVZ-Fusion-3.6.1/pvz_fusion_cheats.ct)。
+* **依赖环境**：需提前安装 [Cheat Engine](https://www.cheatengine.org/) 软件。
+* **使用方法**：启动游戏进入关卡后，双击打开该 `.ct` 文件，在 CE 中附加 `PlantsVsZombiesRH.exe` 进程，勾选底部列表中的功能激活。
 
-### 方式 A：图形界面修改器 (WPF GUI)
-这是对大部分玩家最友好、操作最简单的方案。
-1. **启动游戏**：双击运行 [PlantsVsZombiesRH.exe](file:///c:/Users/blycr/Desktop/sth/PC_PVZ-Fusion-3.6.1/PlantsVsZombiesRH.exe) 并进入任意关卡。
-2. **运行修改器**：直接双击运行根目录下的 [pvz_fusion_cheats_wpf.exe](file:///c:/Users/blycr/Desktop/sth/PC_PVZ-Fusion-3.6.1/pvz_fusion_cheats_wpf.exe)。
-3. **功能控制**：在图形界面窗口中，直接通过勾选框开启或关闭对应功能，使用滑动条或输入数值调节游戏运行速率。
-> **权限说明**：修改器配备了智能权限自适应机制。如果游戏以普通权限启动，修改器也无需管理员权限，双击直接运行即可，免除手动提权烦恼。
-
----
-
-### 方式 B：控制台修改器 (C# Console)
-1. **启动游戏**：进入任意游戏关卡。
-2. **运行修改器**：直接双击运行根目录下的 [pvz_fusion_cheats_cs.exe](file:///c:/Users/blycr/Desktop/sth/PC_PVZ-Fusion-3.6.1/pvz_fusion_cheats_cs.exe)。
-3. **功能控制**：根据命令行窗口中显示的菜单，输入对应的数字（`1`至`7`）或字母（`A` 一键开启，`R` 还原重置，`Q` 还原并退出）并按回车即可。
-
----
-
-### 方式 C：Cheat Engine 表格 (CE Table)
-1. **安装软件**：确保系统中已安装 [Cheat Engine](https://www.cheatengine.org/) (推荐 7.4 或更高版本)。
-2. **启动游戏**：进入游戏关卡。
-3. **打开表格**：双击根目录下的 [pvz_fusion_cheats.ct](file:///c:/Users/blycr/Desktop/sth/PC_PVZ-Fusion-3.6.1/pvz_fusion_cheats.ct)。
-4. **附加进程**：在 Cheat Engine 中点击左上角的电脑图标，在进程列表中选中 `PlantsVsZombiesRH.exe` 并点击 Open。
-5. **激活功能**：在 CE 底部的地址列表中，勾选对应功能左侧的激活方块。
+### 方式 D：Python 源码运行（开发者模式）
+* **适用人群**：开发者，需要修改逻辑或查看完整实现。
+* **源文件**：项目中的 [pvz_fusion_cheats_v7.py](file:///c:/Users/blycr/Desktop/sth/PC_PVZ-Fusion-3.6.1/pvz_fusion_cheats_v7.py) 脚本。
+* **使用步骤**：
+  1. 安装 uv 包管理器（PowerShell 中运行）：`powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"`
+  2. 安装 Python 3.12：`uv python install 3.12`
+  3. 进入游戏关卡后，在项目目录下执行：`.venv\Scripts\python pvz_fusion_cheats_v7.py`
 
 ---
 
-### 方式 D：Python 源码运行
-#### 1. 环境准备
-* **安装 uv 包管理器**：
-  ```powershell
-  powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
-  ```
-  安装完成后重启终端并验证：
-  ```bash
-  uv --version
-  ```
-* **安装 Python 3.12**：
-  ```bash
-  uv python install 3.12
-  ```
+## 功能说明
 
-#### 2. 运行修改器
-1. 进入游戏关卡。
-2. 在项目根目录下打开命令行终端（如 PowerShell），运行：
-   ```bash
-   .venv\Scripts\python pvz_fusion_cheats_v7.py
-   ```
-3. 根据交互式菜单输入数字切换选项状态。
-
----
-
-## 功能明细说明
-
-| 快捷键 | 功能名称 | 详细效果与游戏表现 |
+| 快捷键 | 功能名称 | 游戏内表现 |
 | :---: | :--- | :--- |
-| `1` | **极速冷却 ×100** | 所有卡牌、手套、锤子的 CD 瞬间冷却完毕，可无限连种。 |
-| `2` | **阳光越花越多** | 捡起阳光或种植消耗阳光时，阳光值不仅不会减少，还会以 100 倍的数值增加。 |
-| `3` | **任意种植与重叠** | 解除地形限制（如无睡莲直接种在水上、无花盆种在屋顶）。兼容植物正常融合，不兼容植物在同一格内物理重叠各自独立运行。 |
-| `4` | **植物无敌** | 植物免疫常规啃食、落石碾压、冰车碾压和落水死亡，不影响玩家主动铲除以及爆炸植物（如樱桃炸弹）的正常自毁。 |
-| `5` | **僵尸一击必杀** | 任意僵尸在受到任何微小伤害时都会瞬间死亡。 |
-| `6` | **特定植物加速** | 大嘴花咀嚼时间缩短至 1/20，土豆地雷准备时间缩短至 1/20，保留正常的吞噬和上升动画。 |
-| `7` | **游戏整体速率调节** | 支持 0.1x 到 10.0x 游戏引擎倍速的连续调节（默认为 1.0x 正常速度）。 |
+| 1 | 极速冷却 ×100 | 卡牌、手套、锤子 CD 瞬间冷却完毕，可无限连种。 |
+| 2 | 阳光越花越多 | 消耗阳光或拾取阳光时，数值均以 100 倍增加。 |
+| 3 | 任意种植与重叠 | 解除地形限制（可水上、屋顶直接种植），且保留兼容植物自动融合逻辑。 |
+| 4 | 植物无敌 | 免疫啃食与环境秒杀（不影响玩家铲除和爆炸植物自毁）。 |
+| 5 | 僵尸一击必杀 | 僵尸受到任何伤害立即死亡。 |
+| 6 | 特定植物加速 | 大嘴花咀嚼与土豆地雷准备时间缩短至 1/20，保留动画。 |
+| 7 | 整体速率调节 | 支持 0.1x 到 10.0x 游戏运行速度的无级调节。 |
 
 ---
 
 ## 注意事项
 
-- **运行库说明**：若运行 `*.exe` 方式时系统提示缺少 .NET 运行库，说明您的 Windows 系统未安装 `.NET 10` 环境。您可以直接在系统弹出的提示中下载安装，或选择方式 C (CE 表格) 或 方式 D (Python 源码) 运行。
-- **纯内存操作**：本工具包所有修改方案均为纯内存操作，不修改游戏本身的存档或文件，关闭修改器后游戏即刻恢复原状，安全无后顾之忧。
-- **版本绑定**：所有内存特征码与硬编码偏移均针对 **PVZ 融合版 3.6.1** 进行了适配与校验，其他版本不保证能正常工作。
+* **纯内存修改**：修改器为纯内存操作，不修改游戏存档与本地文件，退出后游戏即恢复正常。
+* **版本绑定**：所有内存特征码与偏移量仅适配 《植物大战僵尸融合版 3.6.1》 游戏版本，其他版本不保证可用。
