@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
@@ -25,23 +26,29 @@ namespace pvz_fusion_cheats_cs
     public abstract class CheatFeature
     {
         public string Key { get; }
-        public string Name { get; }
-        public string Description { get; }
+        public string Name => Program.IsEnglish ? NameEn : NameZh;
+        public string Description => Program.IsEnglish ? DescriptionEn : DescriptionZh;
+        public string NameZh { get; }
+        public string NameEn { get; }
+        public string DescriptionZh { get; }
+        public string DescriptionEn { get; }
         public bool Enabled { get; protected set; } = false;
 
         protected List<PatchRecord> Patches = new List<PatchRecord>();
         protected List<IntPtr> Caves = new List<IntPtr>();
 
-        protected CheatFeature(string key, string name, string description)
+        protected CheatFeature(string key, string nameZh, string nameEn, string descriptionZh, string descriptionEn)
         {
             Key = key;
-            Name = name;
-            Description = description;
+            NameZh = nameZh;
+            NameEn = nameEn;
+            DescriptionZh = descriptionZh;
+            DescriptionEn = descriptionEn;
         }
 
         public string GetStatusStr()
         {
-            return Enabled ? "[ 已激活 ]" : "[ 已关闭 ]";
+            return Enabled ? Program.T("[ 已激活 ]", "[  Active ]") : Program.T("[ 已关闭 ]", "[  Closed ]");
         }
 
         public virtual string OnClick(NativeMemory pm, IntPtr baseAddress, Program modifier)
@@ -49,14 +56,14 @@ namespace pvz_fusion_cheats_cs
             if (Enabled)
             {
                 if (Disable(pm, baseAddress, modifier))
-                    return $"已关闭功能: '{Name}'";
+                    return Program.T($"已关闭功能: '{Name}'", $"Disabled feature: '{Name}'");
             }
             else
             {
                 if (Enable(pm, baseAddress, modifier))
-                    return $"开启成功: '{Name}'";
+                    return Program.T($"开启成功: '{Name}'", $"Enabled successfully: '{Name}'");
                 else
-                    return $"开启失败: '{Name}'，请确认已在关卡内";
+                    return Program.T($"开启失败: '{Name}'，请确认已在关卡内", $"Failed to enable: '{Name}', please make sure you are in a level");
             }
             return null;
         }
@@ -71,7 +78,7 @@ namespace pvz_fusion_cheats_cs
                 return true;
             }
 
-            Console.WriteLine($"[*] 正在还原 {Name} 的修改点...");
+            Console.WriteLine(Program.T($"[*] 正在还原 {Name} 的修改点...", $"[*] Restoring patch points for {Name}..."));
             // Reverse restore to prevent race conditions in nested hooks
             for (int i = Patches.Count - 1; i >= 0; i--)
             {
@@ -82,7 +89,7 @@ namespace pvz_fusion_cheats_cs
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine($"[!] 还原地址 0x{patch.Address.ToInt64():X} 失败: {e.Message}");
+                    Console.WriteLine(Program.T($"[!] 还原地址 0x{patch.Address.ToInt64():X} 失败: {e.Message}", $"[!] Failed to restore address 0x{patch.Address.ToInt64():X}: {e.Message}"));
                     return false;
                 }
             }
@@ -136,7 +143,11 @@ namespace pvz_fusion_cheats_cs
         private IntPtr _targetAddr = IntPtr.Zero;
         private IntPtr _caveAddr = IntPtr.Zero;
 
-        public CooldownFeature() : base("1", "极速冷却 ×100", "所有卡牌和手套的CD瞬间冷却完毕") { }
+        public CooldownFeature() : base(
+            "1",
+            "极速冷却 ×100", "Instant Cooldown x100",
+            "所有卡牌和手套的CD瞬间冷却完毕", "Seed packets, gloves, and hammers cool down instantly"
+        ) { }
 
         public override bool Enable(NativeMemory pm, IntPtr baseAddress, Program modifier)
         {
@@ -152,14 +163,14 @@ namespace pvz_fusion_cheats_cs
                 {
                     if (verify[i] != origBytes[i])
                     {
-                        Console.WriteLine($"[-] 冷却点字节验证失败 @ 0x{_targetAddr.ToInt64():X}");
+                        Console.WriteLine(Program.T($"[-] 冷却点字节验证失败 @ 0x{_targetAddr.ToInt64():X}", $"[-] Cooldown byte verification failed @ 0x{_targetAddr.ToInt64():X}"));
                         return false;
                     }
                 }
             }
             catch (Exception e)
             {
-                Console.WriteLine($"[-] 读取冷却点失败: {e.Message}");
+                Console.WriteLine(Program.T($"[-] 读取冷却点失败: {e.Message}", $"[-] Failed to read cooldown address: {e.Message}"));
                 return false;
             }
 
@@ -168,7 +179,7 @@ namespace pvz_fusion_cheats_cs
                 _float100Addr = pm.FindFloat100();
                 if (_float100Addr == IntPtr.Zero)
                 {
-                    Console.WriteLine("[-] 未能在内存中定位 100.0f 常量");
+                    Console.WriteLine(Program.T("[-] 未能在内存中定位 100.0f 常量", "[-] Failed to locate 100.0f constant in memory"));
                     return false;
                 }
             }
@@ -182,7 +193,7 @@ namespace pvz_fusion_cheats_cs
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine($"[-] 获取代码洞穴失败: {e.Message}");
+                    Console.WriteLine(Program.T($"[-] 获取代码洞穴失败: {e.Message}", $"[-] Failed to get code cave: {e.Message}"));
                     return false;
                 }
 
@@ -228,7 +239,11 @@ namespace pvz_fusion_cheats_cs
         private IntPtr _cave1Addr = IntPtr.Zero;
         private IntPtr _cave2Addr = IntPtr.Zero;
 
-        public SunFeature() : base("2", "阳光越花越多", "捡阳光或种植消耗阳光时，阳光皆为 100 倍增加") { }
+        public SunFeature() : base(
+            "2",
+            "阳光越花越多", "Multiplying Sun",
+            "捡阳光或种植消耗阳光时，阳光皆为 100 倍增加", "Picking up or consuming sun increases sun by 100x"
+        ) { }
 
         public override bool Enable(NativeMemory pm, IntPtr baseAddress, Program modifier)
         {
@@ -241,7 +256,7 @@ namespace pvz_fusion_cheats_cs
                 _getSunAddr = pm.FindPattern(getsunPattern, 0x7DAF00, 0x7DCF00);
                 if (_getSunAddr == IntPtr.Zero)
                 {
-                    Console.WriteLine("[-] 未能定位 Board.GetSun 阳光增加点");
+                    Console.WriteLine(Program.T("[-] 未能定位 Board.GetSun 阳光增加点", "[-] Failed to locate Board.GetSun (add sun address)"));
                     return false;
                 }
             }
@@ -252,7 +267,7 @@ namespace pvz_fusion_cheats_cs
                 _useSunAddr = pm.FindPattern(usesunPattern, 0x7E8100, 0x7EA100);
                 if (_useSunAddr == IntPtr.Zero)
                 {
-                    Console.WriteLine("[-] 未能定位 Board.UseSun 阳光扣除点");
+                    Console.WriteLine(Program.T("[-] 未能定位 Board.UseSun 阳光扣除点", "[-] Failed to locate Board.UseSun (subtract sun address)"));
                     return false;
                 }
             }
@@ -268,14 +283,14 @@ namespace pvz_fusion_cheats_cs
                 {
                     if (v1[i] != origGet[i] || v2[i] != origUse[i])
                     {
-                        Console.WriteLine("[-] 阳光控制点数据验证失败，已被修改过");
+                        Console.WriteLine(Program.T("[-] 阳光控制点数据验证失败，已被修改过", "[-] Sun control points verification failed, already modified"));
                         return false;
                     }
                 }
             }
             catch (Exception e)
             {
-                Console.WriteLine($"[-] 读取阳光控制点数据失败: {e.Message}");
+                Console.WriteLine(Program.T($"[-] 读取阳光控制点数据失败: {e.Message}", $"[-] Failed to read sun control points: {e.Message}"));
                 return false;
             }
 
@@ -289,7 +304,7 @@ namespace pvz_fusion_cheats_cs
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine($"[-] 分配 Board.GetSun 洞穴失败: {e.Message}");
+                    Console.WriteLine(Program.T($"[-] 分配 Board.GetSun 洞穴失败: {e.Message}", $"[-] Failed to allocate getsun cave: {e.Message}"));
                     return false;
                 }
 
@@ -315,7 +330,7 @@ namespace pvz_fusion_cheats_cs
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine($"[-] 分配 Board.UseSun 洞穴失败: {e.Message}");
+                    Console.WriteLine(Program.T($"[-] 分配 Board.UseSun 洞穴失败: {e.Message}", $"[-] Failed to allocate usesun cave: {e.Message}"));
                     return false;
                 }
 
@@ -365,7 +380,11 @@ namespace pvz_fusion_cheats_cs
         private IntPtr _skipAddr = IntPtr.Zero;
         private IntPtr _failAddr = IntPtr.Zero;
 
-        public PlacementFeature() : base("3", "任意种植与重叠融合", "解除地形限制可水面重叠种植，且保留兼容植物自动融合逻辑") { }
+        public PlacementFeature() : base(
+            "3",
+            "任意种植与重叠融合", "Free Planting & Overlap",
+            "解除地形限制可水面重叠种植，且保留兼容植物自动融合逻辑", "Plant anywhere including water/roof, overlapping compatible plants fuses them"
+        ) { }
 
         public override bool Enable(NativeMemory pm, IntPtr baseAddress, Program modifier)
         {
@@ -389,7 +408,7 @@ namespace pvz_fusion_cheats_cs
                 {
                     if (v1[i] != orig1[i])
                     {
-                        Console.WriteLine("[-] 种植合法检测点验证失败");
+                        Console.WriteLine(Program.T("[-] 种植合法检测点验证失败", "[-] Placement check validation failed"));
                         return false;
                     }
                 }
@@ -398,14 +417,14 @@ namespace pvz_fusion_cheats_cs
                 {
                     if (v2[i] != orig2[i] || v3[i] != orig3[i])
                     {
-                        Console.WriteLine("[-] 种植判断跳转点验证失败");
+                        Console.WriteLine(Program.T("[-] 种植判断跳转点验证失败", "[-] Placement logic jump validation failed"));
                         return false;
                     }
                 }
             }
             catch (Exception e)
             {
-                Console.WriteLine($"[-] 读取种植控制数据失败: {e.Message}");
+                Console.WriteLine(Program.T($"[-] 读取种植控制数据失败: {e.Message}", $"[-] Failed to read placement control data: {e.Message}"));
                 return false;
             }
 
@@ -440,7 +459,11 @@ namespace pvz_fusion_cheats_cs
         private IntPtr _dieAddr = IntPtr.Zero;
         private IntPtr _caveAddr = IntPtr.Zero;
 
-        public InvincibleFeature() : base("4", "植物无敌", "植物免疫啃食/秒杀/碾压/落水，且不影响铲除与爆炸自毁") { }
+        public InvincibleFeature() : base(
+            "4",
+            "植物无敌", "Invincible Plants",
+            "植物免疫啃食/秒杀/碾压/落水，且不影响铲除与爆炸自毁", "Plants immune to chewing/instant kills, shovel-up & explosions still destroy them"
+        ) { }
 
         public override bool Enable(NativeMemory pm, IntPtr baseAddress, Program modifier)
         {
@@ -461,7 +484,7 @@ namespace pvz_fusion_cheats_cs
                 {
                     if (v1[i] != orig1[i])
                     {
-                        Console.WriteLine("[-] 植物受伤害保护点验证失败");
+                        Console.WriteLine(Program.T("[-] 植物受伤害保护点验证失败", "[-] Plant damage protection verification failed"));
                         return false;
                     }
                 }
@@ -470,14 +493,14 @@ namespace pvz_fusion_cheats_cs
                 {
                     if (v2[i] != orig2[i])
                     {
-                        Console.WriteLine("[-] 植物死亡判定点验证失败");
+                        Console.WriteLine(Program.T("[-] 植物死亡判定点验证失败", "[-] Plant death determination verification failed"));
                         return false;
                     }
                 }
             }
             catch (Exception e)
             {
-                Console.WriteLine($"[-] 读取植物无敌控制数据失败: {e.Message}");
+                Console.WriteLine(Program.T($"[-] 读取植物无敌控制数据失败: {e.Message}", $"[-] Failed to read plant invincibility control data: {e.Message}"));
                 return false;
             }
 
@@ -490,7 +513,7 @@ namespace pvz_fusion_cheats_cs
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine($"[-] 分配植物死亡判定洞穴失败: {e.Message}");
+                    Console.WriteLine(Program.T($"[-] 分配植物死亡判定洞穴失败: {e.Message}", $"[-] Failed to allocate death determination cave: {e.Message}"));
                     return false;
                 }
 
@@ -544,7 +567,11 @@ namespace pvz_fusion_cheats_cs
         private IntPtr _targetAddr = IntPtr.Zero;
         private IntPtr _caveAddr = IntPtr.Zero;
 
-        public OneHitKillFeature() : base("5", "僵尸一击必杀", "所有僵尸在受到任意伤害时立即死亡") { }
+        public OneHitKillFeature() : base(
+            "5",
+            "僵尸一击必杀", "One-Hit Kill Zombies",
+            "所有僵尸在受到任意伤害时立即死亡", "All zombies die immediately upon taking any damage"
+        ) { }
 
         public override bool Enable(NativeMemory pm, IntPtr baseAddress, Program modifier)
         {
@@ -561,14 +588,14 @@ namespace pvz_fusion_cheats_cs
                 {
                     if (verify[i] != origBytes[i])
                     {
-                        Console.WriteLine($"[-] 僵尸伤害函数验证失败 @ 0x{_targetAddr.ToInt64():X}");
+                        Console.WriteLine(Program.T($"[-] 僵尸伤害函数验证失败 @ 0x{_targetAddr.ToInt64():X}", $"[-] Zombie damage function verification failed @ 0x{_targetAddr.ToInt64():X}"));
                         return false;
                     }
                 }
             }
             catch (Exception e)
             {
-                Console.WriteLine($"[-] 读取僵尸伤害接口失败: {e.Message}");
+                Console.WriteLine(Program.T($"[-] 读取僵尸伤害接口失败: {e.Message}", $"[-] Failed to read zombie damage function: {e.Message}"));
                 return false;
             }
 
@@ -581,7 +608,7 @@ namespace pvz_fusion_cheats_cs
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine($"[-] 分配僵尸伤害劫持洞穴失败: {e.Message}");
+                    Console.WriteLine(Program.T($"[-] 分配僵尸伤害劫持洞穴失败: {e.Message}", $"[-] Failed to allocate zombie damage cave: {e.Message}"));
                     return false;
                 }
 
@@ -628,7 +655,13 @@ namespace pvz_fusion_cheats_cs
         private IntPtr _chewCaveAddr = IntPtr.Zero;
         private IntPtr _riseCaveAddr = IntPtr.Zero;
 
-        public AccelerateFeature() : base("6", "特定植物状态加速", "大嘴花咀嚼与土豆地雷准备等时间加速 20 倍 (非瞬爆，保留正常动作)") { }
+        public CooldownFeature CooldownFeature = new CooldownFeature();
+
+        public AccelerateFeature() : base(
+            "6",
+            "特定植物状态加速", "Specific Plant Speedup",
+            "大嘴花咀嚼与土豆地雷准备等时间加速 20 倍 (非瞬爆，保留正常动作)", "Chomper chewing and Potato Mine arming runs 20x faster, retaining animations"
+        ) { }
 
         public override bool Enable(NativeMemory pm, IntPtr baseAddress, Program modifier)
         {
@@ -649,7 +682,7 @@ namespace pvz_fusion_cheats_cs
                 {
                     if (v1[i] != origChew[i])
                     {
-                        Console.WriteLine("[-] 咀嚼加速点验证失败");
+                        Console.WriteLine(Program.T("[-] 咀嚼加速点验证失败", "[-] Chewing speedup point verification failed"));
                         return false;
                     }
                 }
@@ -658,14 +691,14 @@ namespace pvz_fusion_cheats_cs
                 {
                     if (v2[i] != origRise[i])
                     {
-                        Console.WriteLine("[-] 准备加速点验证失败");
+                        Console.WriteLine(Program.T("[-] 准备加速点验证失败", "[-] Arming speedup point verification failed"));
                         return false;
                     }
                 }
             }
             catch (Exception e)
             {
-                Console.WriteLine($"[-] 读取加速点数据失败: {e.Message}");
+                Console.WriteLine(Program.T($"[-] 读取加速点数据失败: {e.Message}", $"[-] Failed to read speedup points: {e.Message}"));
                 return false;
             }
 
@@ -678,7 +711,7 @@ namespace pvz_fusion_cheats_cs
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine($"[-] 分配加速代码洞穴失败: {e.Message}");
+                    Console.WriteLine(Program.T($"[-] 分配加速代码洞穴失败: {e.Message}", $"[-] Failed to allocate speedup cave: {e.Message}"));
                     return false;
                 }
 
@@ -788,38 +821,42 @@ namespace pvz_fusion_cheats_cs
     {
         public double Speed { get; private set; } = 1.0;
 
-        public SpeedFeature() : base("7", "自由调节游戏整体速率", "自由调节游戏整体运行速率 (支持加速/减速，默认 1.0x)") { }
+        public SpeedFeature() : base(
+            "7",
+            "自由调节游戏整体速率", "Game Speed Controller",
+            "自由调节游戏整体运行速率 (支持加速/减速，默认 1.0x)", "Smooth global game speed adjustment from 0.1x to 10.0x (default 1.0x)"
+        ) { }
 
         public string GetSpeedStatusStr()
         {
             if (Enabled && Speed != 1.0)
-                return $"[ 速率: {Speed}x ]";
-            return "[ 已关闭 ]";
+                return Program.T($"[ 速率: {Speed}x ]", $"[ Speed: {Speed}x ]");
+            return Program.T("[ 已关闭 ]", "[  Closed ]");
         }
 
         public override string OnClick(NativeMemory pm, IntPtr baseAddress, Program modifier)
         {
-            Console.Write("\n[*] 请输入新的游戏速度倍率 (范围 0.1 ~ 10.0，输入 1.0 恢复常规): ");
+            Console.Write(Program.T("\n[*] 请输入新的游戏速度倍率 (范围 0.1 ~ 10.0，输入 1.0 恢复常规): ", "\n[*] Please enter new game speed (range 0.1 ~ 10.0, enter 1.0 for normal): "));
             string valStr = Console.ReadLine()?.Trim();
             if (double.TryParse(valStr, out double val))
             {
                 if (val < 0.1 || val > 10.0)
                 {
-                    return "速度倍率超出安全范围 (0.1 ~ 10.0)";
+                    return Program.T("速度倍率超出安全范围 (0.1 ~ 10.0)", "Speed value out of safe range (0.1 ~ 10.0)");
                 }
 
                 if (SetSpeed(pm, baseAddress, val))
                 {
                     Speed = val;
                     Enabled = (val != 1.0);
-                    return $"游戏速度已成功设置为 {val}x";
+                    return Program.T($"游戏速度已成功设置为 {val}x", $"Game speed successfully set to {val}x");
                 }
                 else
                 {
-                    return "设置游戏速度失败，请确认已在关卡内";
+                    return Program.T("设置游戏速度失败，请确认已在关卡内", "Failed to set speed, please make sure you are in a level");
                 }
             }
-            return "输入无效，必须是数字";
+            return Program.T("输入无效，必须是数字", "Invalid input, must be a number");
         }
 
         public override bool Enable(NativeMemory pm, IntPtr baseAddress, Program modifier)
@@ -889,7 +926,7 @@ namespace pvz_fusion_cheats_cs
             }
             catch (Exception e)
             {
-                Console.WriteLine($"[-] 设置游戏速度失败: {e.Message}");
+                Console.WriteLine(Program.T($"[-] 设置游戏速度失败: {e.Message}", $"[-] Failed to set game speed: {e.Message}"));
                 return false;
             }
         }
@@ -900,6 +937,13 @@ namespace pvz_fusion_cheats_cs
     // ============================================================================
     public class Program
     {
+        public static bool IsEnglish { get; set; } = false;
+
+        public static string T(string zh, string en)
+        {
+            return IsEnglish ? en : zh;
+        }
+
         private NativeMemory _pm = null;
         private IntPtr _baseAddress = IntPtr.Zero;
         private List<CheatFeature> _features = new List<CheatFeature>();
@@ -939,7 +983,7 @@ namespace pvz_fusion_cheats_cs
             }
             catch
             {
-                Console.WriteLine("[-] 授权失败。请手动以管理员身份运行此程序。");
+                Console.WriteLine(T("[-] 授权失败。请手动以管理员身份运行此程序。", "[-] Elevation failed. Please run this program as Administrator manually."));
                 Console.ReadLine();
                 Environment.Exit(1);
             }
@@ -951,7 +995,7 @@ namespace pvz_fusion_cheats_cs
             if (_pm.Attach("PlantsVsZombiesRH", "GameAssembly.dll"))
             {
                 _baseAddress = _pm.BaseAddress;
-                Console.WriteLine($"[+] 已成功附加游戏进程，GameAssembly.dll 基址: 0x{_baseAddress.ToInt64():X}");
+                Console.WriteLine(T($"[+] 已成功附加游戏进程，GameAssembly.dll 基址: 0x{_baseAddress.ToInt64():X}", $"[+] Successfully attached to game process. GameAssembly.dll base: 0x{_baseAddress.ToInt64():X}"));
                 return "SUCCESS";
             }
 
@@ -967,7 +1011,7 @@ namespace pvz_fusion_cheats_cs
 
         private void RestoreAll()
         {
-            Console.WriteLine("\n[*] 正在还原所有内存补丁并清理资源...");
+            Console.WriteLine(T("\n[*] 正在还原所有内存补丁并清理资源...", "\n[*] Restoring all memory patches and cleaning resources..."));
             foreach (var f in _features)
             {
                 if (f.Enabled)
@@ -976,7 +1020,7 @@ namespace pvz_fusion_cheats_cs
                 }
                 f.Cleanup(_pm);
             }
-            Console.WriteLine("[+] 所有修改点已恢复原样");
+            Console.WriteLine(T("[+] 所有修改点已恢复原样", "[+] All patches successfully restored"));
         }
 
         public void RunLoop()
@@ -987,7 +1031,7 @@ namespace pvz_fusion_cheats_cs
                 if (!_pm.IsGameRunning())
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("\n[-] 检测到游戏进程已退出，正在执行自动清理...");
+                    Console.WriteLine(T("\n[-] 检测到游戏进程已退出，正在执行自动清理...", "\n[-] Game process exit detected. Performing auto cleanup..."));
                     Console.ResetColor();
                     break;
                 }
@@ -995,7 +1039,8 @@ namespace pvz_fusion_cheats_cs
                 Console.Clear();
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine("=========================================================================================");
-                Console.WriteLine($"        PVZ Fusion 3.6.1 修改器 C# 原生版 - 已附加进程 PID: {_pm.GameProcess.Id}");
+                Console.WriteLine(T($"        PVZ Fusion 3.6.1 修改器 C# 原生版 (双语) - 已附加进程 PID: {_pm.GameProcess.Id}", 
+                                    $"        PVZ Fusion 3.6.1 Trainer C# Native (Bilingual) - Attached PID: {_pm.GameProcess.Id}"));
                 Console.WriteLine("=========================================================================================");
                 Console.ResetColor();
 
@@ -1005,7 +1050,7 @@ namespace pvz_fusion_cheats_cs
                     Console.Write($" [{f.Key}] ");
                     Console.ResetColor();
 
-                    string nameStr = f.Name.PadRight(26);
+                    string nameStr = f.Name.PadRight(Program.IsEnglish ? 30 : 26);
                     Console.Write(nameStr);
 
                     // Print status in green/red
@@ -1030,9 +1075,10 @@ namespace pvz_fusion_cheats_cs
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine("-----------------------------------------------------------------------------------------");
                 Console.ResetColor();
-                Console.WriteLine(" [A] 一键开启所有功能");
-                Console.WriteLine(" [R] 还原所有修改 (全部重置)");
-                Console.WriteLine(" [Q] 还原并退出修改器");
+                Console.WriteLine(T(" [A] 一键开启所有功能", " [A] Enable all features"));
+                Console.WriteLine(T(" [R] 还原所有修改 (全部重置)", " [R] Restore all patches (Reset)"));
+                Console.WriteLine(T(" [Q] 还原并退出修改器", " [Q] Restore and Exit"));
+                Console.WriteLine(T($" [L] 切换语言 / Switch Language (当前: {(IsEnglish ? "EN" : "CN")})", $" [L] Switch Language / 切换语言 (Current: {(IsEnglish ? "EN" : "CN")})"));
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine("=========================================================================================");
                 Console.ResetColor();
@@ -1049,22 +1095,28 @@ namespace pvz_fusion_cheats_cs
                     Console.WriteLine();
                 }
 
-                Console.Write("请输入选项序号 (例如 1) 并按 Enter: ");
+                Console.Write(T("请输入选项序号 (例如 1) 并按 Enter: ", "Please enter option number (e.g. 1) and press Enter: "));
                 string choice = Console.ReadLine()?.Trim().ToUpper();
 
                 if (choice == "Q") break;
+                else if (choice == "L")
+                {
+                    IsEnglish = !IsEnglish;
+                    Console.Title = T("PVZ Fusion 3.6.1 修改器 C# 原生版", "PVZ Fusion 3.6.1 Trainer C# Native");
+                    lastErr = T("已切换语言为：中文", "Language switched to: English");
+                }
                 else if (choice == "R")
                 {
-                    lastErr = "正在重置所有补丁...";
+                    lastErr = T("正在重置所有补丁...", "Resetting all patches...");
                     foreach (var f in _features)
                     {
                         if (f.Enabled) f.Disable(_pm, _baseAddress, this);
                     }
-                    lastErr = "所有补丁重置完成！";
+                    lastErr = T("所有补丁重置完成！", "All patches reset successfully!");
                 }
                 else if (choice == "A")
                 {
-                    lastErr = "正在一键开启所有功能...";
+                    lastErr = T("正在一键开启所有功能...", "Enabling all features...");
                     int success = 0;
                     foreach (var f in _features)
                     {
@@ -1074,7 +1126,7 @@ namespace pvz_fusion_cheats_cs
                             if (f.Enable(_pm, _baseAddress, this)) success++;
                         }
                     }
-                    lastErr = $"一键开启完成！共新激活了 {success} 项功能。";
+                    lastErr = T($"一键开启完成！共新激活了 {success} 项功能。", $"Enable-all completed! Newly activated {success} features.");
                 }
                 else
                 {
@@ -1090,7 +1142,7 @@ namespace pvz_fusion_cheats_cs
                     }
                     if (!found)
                     {
-                        lastErr = "无效的指令，请重新输入";
+                        lastErr = T("无效的指令，请重新输入", "Invalid command, please re-enter");
                     }
                 }
             }
@@ -1098,8 +1150,12 @@ namespace pvz_fusion_cheats_cs
 
         public static void Main(string[] args)
         {
+            // Auto-detect OS language on startup
+            string cultName = CultureInfo.CurrentUICulture.Name;
+            IsEnglish = !cultName.StartsWith("zh", StringComparison.OrdinalIgnoreCase);
+
             // Configure Console properties
-            Console.Title = "PVZ Fusion 3.6.1 修改器 C# 原生版";
+            Console.Title = T("PVZ Fusion 3.6.1 修改器 C# 原生版", "PVZ Fusion 3.6.1 Trainer C# Native");
             
             Program program = new Program();
 
@@ -1111,7 +1167,7 @@ namespace pvz_fusion_cheats_cs
                 if (!IsAdmin())
                 {
                     Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine("[!] 权限不足，正在通过 UAC 请求管理员权限...");
+                    Console.WriteLine(T("[!] 权限不足，正在通过 UAC 请求管理员权限...", "[!] Insufficient privileges, requesting admin elevation via UAC..."));
                     Console.ResetColor();
                     Thread.Sleep(1000);
                     ElevateUac();
@@ -1120,9 +1176,9 @@ namespace pvz_fusion_cheats_cs
                 else
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("[-] 已经是管理员但仍无法打开游戏进程，可能被安全软件拦截。");
+                    Console.WriteLine(T("[-] 已经是管理员但仍无法打开游戏进程，可能被安全软件拦截。", "[-] Already running as Admin but still cannot open game process. It might be blocked by security software."));
                     Console.ResetColor();
-                    Console.WriteLine("\n按任意键退出...");
+                    Console.WriteLine(T("\n按任意键退出...", "\nPress any key to exit..."));
                     Console.ReadLine();
                     return;
                 }
@@ -1130,9 +1186,9 @@ namespace pvz_fusion_cheats_cs
             else if (status == "NOT_RUNNING")
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("[-] 游戏未运行，请先启动 PlantsVsZombiesRH.exe 并进入关卡。");
+                Console.WriteLine(T("[-] 游戏未运行，请先启动 PlantsVsZombiesRH.exe 并进入关卡。", "[-] Game is not running. Please start PlantsVsZombiesRH.exe and enter a level first."));
                 Console.ResetColor();
-                Console.WriteLine("\n按任意键退出...");
+                Console.WriteLine(T("\n按任意键退出...", "\nPress any key to exit..."));
                 Console.ReadLine();
                 return;
             }
@@ -1145,9 +1201,9 @@ namespace pvz_fusion_cheats_cs
             catch (Exception e)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine($"[-] 修改器运行时发生未捕获异常: {e.Message}");
+                Console.WriteLine(T($"[-] 修改器运行时发生未捕获异常: {e.Message}", $"[-] Trainer encountered an uncaught exception: {e.Message}"));
                 Console.ResetColor();
-                Console.WriteLine("\n按任意键退出...");
+                Console.WriteLine(T("\n按任意键退出...", "\nPress any key to exit..."));
                 Console.ReadLine();
             }
             finally

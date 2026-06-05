@@ -11,6 +11,13 @@ namespace pvz_fusion_cheats_wpf
 {
     public partial class MainWindow : Window
     {
+        public static bool IsEnglish { get; set; } = false;
+
+        public static string T(string zh, string en)
+        {
+            return IsEnglish ? en : zh;
+        }
+
         private NativeMemory pm = null;
         private IntPtr baseAddress = IntPtr.Zero;
         private DispatcherTimer attachTimer;
@@ -29,11 +36,84 @@ namespace pvz_fusion_cheats_wpf
         {
             InitializeComponent();
 
+            // Auto-detect system language
+            string cultName = System.Globalization.CultureInfo.CurrentUICulture.Name;
+            IsEnglish = !cultName.StartsWith("zh", StringComparison.OrdinalIgnoreCase);
+
+            UpdateLanguageUI();
+
             // Set up DispatcherTimer to periodically scan and attach to the game
             attachTimer = new DispatcherTimer();
             attachTimer.Interval = TimeSpan.FromSeconds(1.5);
             attachTimer.Tick += AttachTimer_Tick;
             attachTimer.Start();
+        }
+
+        public void UpdateLanguageUI()
+        {
+            // Update Window Title
+            this.Title = T("PVZ Fusion 修改器 v7", "PVZ Fusion Trainer v7");
+
+            // Header Texts
+            Text_Title.Text = T("PVZ Fusion 3.6.1 修改器", "PVZ Fusion 3.6.1 Trainer");
+            Text_SubTitle.Text = T("v7 GUI", "v7 GUI");
+
+            // Language switch button content
+            Btn_Language.Content = IsEnglish ? "中" : "EN";
+
+            // Connection Status
+            if (attached && pm != null && pm.GameProcess != null)
+            {
+                StatusLabel.Text = T($"已附加进程 PID: {pm.GameProcess.Id}", $"Attached PID: {pm.GameProcess.Id}");
+                StatusLabel.Foreground = new SolidColorBrush(Color.FromRgb(16, 185, 129));
+            }
+            else
+            {
+                Process[] p = Process.GetProcessesByName("PlantsVsZombiesRH");
+                if (p.Length > 0)
+                {
+                    StatusLabel.Text = T("权限不足，请使用管理员身份运行", "Access denied. Run as Administrator");
+                    StatusLabel.Foreground = new SolidColorBrush(Color.FromRgb(245, 158, 11));
+                }
+                else
+                {
+                    StatusLabel.Text = T("等待游戏启动...", "Waiting for game to start...");
+                    StatusLabel.Foreground = new SolidColorBrush(Color.FromRgb(160, 174, 192));
+                }
+            }
+
+            // Feature Card Labels
+            Text_CooldownTitle.Text = cooldownFeature.Name;
+            Text_CooldownDesc.Text = cooldownFeature.Description;
+
+            Text_SunTitle.Text = sunFeature.Name;
+            Text_SunDesc.Text = sunFeature.Description;
+
+            Text_PlacementTitle.Text = placementFeature.Name;
+            Text_PlacementDesc.Text = placementFeature.Description;
+
+            Text_InvincibleTitle.Text = invincibleFeature.Name;
+            Text_InvincibleDesc.Text = invincibleFeature.Description;
+
+            Text_OneHitKillTitle.Text = oneHitKillFeature.Name;
+            Text_OneHitKillDesc.Text = oneHitKillFeature.Description;
+
+            Text_AccelerateTitle.Text = accelerateFeature.Name;
+            Text_AccelerateDesc.Text = accelerateFeature.Description;
+
+            Text_SpeedTitle.Text = speedFeature.Name;
+            Text_SpeedDesc.Text = speedFeature.Description;
+
+            // Footer Actions
+            Btn_AdminRelaunch.Content = T("管理员身份运行", "Run as Administrator");
+            Btn_EnableAll.Content = T("一键开启所有", "Enable All");
+            Btn_RestoreAll.Content = T("全部还原", "Restore All");
+        }
+
+        private void Language_Click(object sender, RoutedEventArgs e)
+        {
+            IsEnglish = !IsEnglish;
+            UpdateLanguageUI();
         }
 
         private static bool IsAdmin()
@@ -70,8 +150,7 @@ namespace pvz_fusion_cheats_wpf
 
                 // Update UI state
                 StatusDot.Background = new SolidColorBrush(Color.FromRgb(16, 185, 129)); // Green
-                StatusLabel.Text = $"已附加进程 PID: {pm.GameProcess.Id}";
-                StatusLabel.Foreground = new SolidColorBrush(Color.FromRgb(16, 185, 129));
+                UpdateLanguageUI();
 
                 Toggle_Cooldown.IsEnabled = true;
                 Toggle_Sun.IsEnabled = true;
@@ -93,8 +172,7 @@ namespace pvz_fusion_cheats_wpf
                 if (p.Length > 0)
                 {
                     StatusDot.Background = new SolidColorBrush(Color.FromRgb(245, 158, 11)); // Yellow/Orange
-                    StatusLabel.Text = "权限不足，请使用管理员身份运行";
-                    StatusLabel.Foreground = new SolidColorBrush(Color.FromRgb(245, 158, 11));
+                    UpdateLanguageUI();
 
                     if (!IsAdmin())
                     {
@@ -104,8 +182,7 @@ namespace pvz_fusion_cheats_wpf
                 else
                 {
                     StatusDot.Background = new SolidColorBrush(Color.FromRgb(239, 68, 68)); // Red
-                    StatusLabel.Text = "等待游戏启动...";
-                    StatusLabel.Foreground = new SolidColorBrush(Color.FromRgb(160, 174, 192));
+                    UpdateLanguageUI();
                     Btn_AdminRelaunch.Visibility = Visibility.Collapsed;
                 }
 
@@ -123,8 +200,7 @@ namespace pvz_fusion_cheats_wpf
             }
 
             StatusDot.Background = new SolidColorBrush(Color.FromRgb(239, 68, 68)); // Red
-            StatusLabel.Text = "游戏已退出，等待重新启动...";
-            StatusLabel.Foreground = new SolidColorBrush(Color.FromRgb(160, 174, 192));
+            UpdateLanguageUI();
 
             DisableTogglesUI();
         }
@@ -199,7 +275,12 @@ namespace pvz_fusion_cheats_wpf
                     ignoreEvents = true;
                     toggle.IsChecked = false;
                     ignoreEvents = false;
-                    MessageBox.Show($"激活失败: '{feature.Name}'，请确认已进入关卡内。", "提示", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show(
+                        T($"激活失败: '{feature.Name}'，请确认已进入关卡内。", $"Activation failed: '{feature.Name}', make sure you are in a level."), 
+                        T("提示", "Tip"), 
+                        MessageBoxButton.OK, 
+                        MessageBoxImage.Warning
+                    );
                 }
             }
         }
@@ -224,7 +305,12 @@ namespace pvz_fusion_cheats_wpf
                 Toggle_Speed.IsChecked = false;
                 Slider_Speed.IsEnabled = false;
                 ignoreEvents = false;
-                MessageBox.Show("激活游戏变速失败，请确认已在关卡内。", "提示", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show(
+                    T("激活游戏变速失败，请确认已在关卡内。", "Failed to activate game speed adjustment, make sure you are in a level."), 
+                    T("提示", "Tip"), 
+                    MessageBoxButton.OK, 
+                    MessageBoxImage.Warning
+                );
             }
         }
 
@@ -296,7 +382,12 @@ namespace pvz_fusion_cheats_wpf
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"提权失败: {ex.Message}", "错误", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(
+                    T($"提权失败: {ex.Message}", $"Elevation failed: {ex.Message}"), 
+                    T("错误", "Error"), 
+                    MessageBoxButton.OK, 
+                    MessageBoxImage.Error
+                );
             }
         }
 

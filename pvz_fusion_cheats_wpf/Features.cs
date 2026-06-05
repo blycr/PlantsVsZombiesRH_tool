@@ -20,18 +20,29 @@ namespace pvz_fusion_cheats_wpf
     public abstract class CheatFeature
     {
         public string Key { get; }
-        public string Name { get; }
-        public string Description { get; }
+        public string Name => MainWindow.IsEnglish ? NameEn : NameZh;
+        public string Description => MainWindow.IsEnglish ? DescriptionEn : DescriptionZh;
+        public string NameZh { get; }
+        public string NameEn { get; }
+        public string DescriptionZh { get; }
+        public string DescriptionEn { get; }
         public bool Enabled { get; protected set; } = false;
 
         protected List<PatchRecord> Patches = new List<PatchRecord>();
         protected List<IntPtr> Caves = new List<IntPtr>();
 
-        protected CheatFeature(string key, string name, string description)
+        protected CheatFeature(string key, string nameZh, string nameEn, string descriptionZh, string descriptionEn)
         {
             Key = key;
-            Name = name;
-            Description = description;
+            NameZh = nameZh;
+            NameEn = nameEn;
+            DescriptionZh = descriptionZh;
+            DescriptionEn = descriptionEn;
+        }
+
+        public string GetStatusStr()
+        {
+            return Enabled ? MainWindow.T("[ 已激活 ]", "[  Active ]") : MainWindow.T("[ 已关闭 ]", "[  Closed ]");
         }
 
         public abstract bool Enable(NativeMemory pm, IntPtr baseAddress);
@@ -106,7 +117,11 @@ namespace pvz_fusion_cheats_wpf
         private IntPtr _targetAddr = IntPtr.Zero;
         private IntPtr _caveAddr = IntPtr.Zero;
 
-        public CooldownFeature() : base("1", "极速冷却 ×100", "所有卡牌和手套的CD瞬间冷却完毕") { }
+        public CooldownFeature() : base(
+            "1",
+            "极速冷却 ×100", "Instant Cooldown x100",
+            "所有卡牌和手套的CD瞬间冷却完毕", "Seed packets, gloves, and hammers cool down instantly"
+        ) { }
 
         public override bool Enable(NativeMemory pm, IntPtr baseAddress)
         {
@@ -185,7 +200,11 @@ namespace pvz_fusion_cheats_wpf
         private IntPtr _cave1Addr = IntPtr.Zero;
         private IntPtr _cave2Addr = IntPtr.Zero;
 
-        public SunFeature() : base("2", "阳光越花越多", "捡阳光或种植消耗阳光时，阳光皆为 100 倍增加") { }
+        public SunFeature() : base(
+            "2",
+            "阳光越花越多", "Multiplying Sun",
+            "捡阳光或种植消耗阳光时，阳光皆为 100 倍增加", "Picking up or consuming sun increases sun by 100x"
+        ) { }
 
         public override bool Enable(NativeMemory pm, IntPtr baseAddress)
         {
@@ -297,7 +316,11 @@ namespace pvz_fusion_cheats_wpf
         private IntPtr _skipAddr = IntPtr.Zero;
         private IntPtr _failAddr = IntPtr.Zero;
 
-        public PlacementFeature() : base("3", "任意种植与重叠融合", "解除地形限制可水面重叠种植，且保留兼容植物自动融合逻辑") { }
+        public PlacementFeature() : base(
+            "3",
+            "任意种植与重叠融合", "Free Planting & Overlap",
+            "解除地形限制可水面重叠种植，且保留兼容植物自动融合逻辑", "Plant anywhere including water/roof, overlapping compatible plants fuses them"
+        ) { }
 
         public override bool Enable(NativeMemory pm, IntPtr baseAddress)
         {
@@ -362,7 +385,11 @@ namespace pvz_fusion_cheats_wpf
         private IntPtr _dieAddr = IntPtr.Zero;
         private IntPtr _caveAddr = IntPtr.Zero;
 
-        public InvincibleFeature() : base("4", "植物无敌", "植物免疫啃食/秒杀/碾压/落水，且不影响铲除与爆炸自毁") { }
+        public InvincibleFeature() : base(
+            "4",
+            "植物无敌", "Invincible Plants",
+            "植物免疫啃食/秒杀/碾压/落水，且不影响铲除与爆炸自毁", "Plants immune to chewing/instant kills, shovel-up & explosions still destroy them"
+        ) { }
 
         public override bool Enable(NativeMemory pm, IntPtr baseAddress)
         {
@@ -386,7 +413,7 @@ namespace pvz_fusion_cheats_wpf
 
                 for (int i = 0; i < 14; i++)
                 {
-                    if (v2[i] != orig2[i]) return false;
+                    if (v2[i] != origDieVerify[i]) return false; // wait, using helper variable
                 }
             }
             catch
@@ -429,10 +456,10 @@ namespace pvz_fusion_cheats_wpf
             for (int i = 5; i < 14; i++) patchDie[i] = 0x90;
 
             byte[] origTakedamageVerify = { 0x48, 0x8B, 0xC4, 0x48, 0x89, 0x58, 0x10 };
-            byte[] origDieVerify = { 0x48, 0x8B, 0xC4, 0x48, 0x89, 0x58, 0x18, 0x89, 0x50, 0x10, 0x48, 0x89, 0x48, 0x08 };
+            byte[] origDieVerify2 = { 0x48, 0x8B, 0xC4, 0x48, 0x89, 0x58, 0x18, 0x89, 0x50, 0x10, 0x48, 0x89, 0x48, 0x08 };
 
             Patches.Add(new PatchRecord(_takedamageAddr, origTakedamageVerify, patchTakedamage));
-            Patches.Add(new PatchRecord(_dieAddr, origDieVerify, patchDie));
+            Patches.Add(new PatchRecord(_dieAddr, origDieVerify2, patchDie));
 
             pm.WriteBytes(_takedamageAddr, patchTakedamage);
             pm.WriteBytes(_dieAddr, patchDie);
@@ -440,6 +467,8 @@ namespace pvz_fusion_cheats_wpf
             Enabled = true;
             return true;
         }
+
+        private static readonly byte[] origDieVerify = { 0x48, 0x8B, 0xC4, 0x48, 0x89, 0x58, 0x18, 0x89, 0x50, 0x10, 0x48, 0x89, 0x48, 0x08 };
     }
 
     // ============================================================================
@@ -450,7 +479,11 @@ namespace pvz_fusion_cheats_wpf
         private IntPtr _targetAddr = IntPtr.Zero;
         private IntPtr _caveAddr = IntPtr.Zero;
 
-        public OneHitKillFeature() : base("5", "僵尸一击必杀", "所有僵尸在受到任意伤害时立即死亡") { }
+        public OneHitKillFeature() : base(
+            "5",
+            "僵尸一击必杀", "One-Hit Kill Zombies",
+            "所有僵尸在受到任意伤害时立即死亡", "All zombies die immediately upon taking any damage"
+        ) { }
 
         public override bool Enable(NativeMemory pm, IntPtr baseAddress)
         {
@@ -524,7 +557,11 @@ namespace pvz_fusion_cheats_wpf
         private IntPtr _chewCaveAddr = IntPtr.Zero;
         private IntPtr _riseCaveAddr = IntPtr.Zero;
 
-        public AccelerateFeature() : base("6", "特定植物状态加速", "大嘴花咀嚼与土豆地雷准备等时间加速 20 倍") { }
+        public AccelerateFeature() : base(
+            "6",
+            "特定植物状态加速", "Specific Plant Speedup",
+            "大嘴花咀嚼与土豆地雷准备等时间加速 20 倍 (非瞬爆，保留正常动作)", "Chomper chewing and Potato Mine arming runs 20x faster, retaining animations"
+        ) { }
 
         public override bool Enable(NativeMemory pm, IntPtr baseAddress)
         {
@@ -643,7 +680,11 @@ namespace pvz_fusion_cheats_wpf
     {
         public double Speed { get; private set; } = 1.0;
 
-        public SpeedFeature() : base("7", "自由调节游戏整体速率", "自由调节游戏整体运行速率 (支持加速/减速，默认 1.0x)") { }
+        public SpeedFeature() : base(
+            "7",
+            "自由调节游戏整体速率", "Game Speed Controller",
+            "自由调节游戏整体运行速率 (支持加速/减速，默认 1.0x)", "Smooth global game speed adjustment from 0.1x to 10.0x (default 1.0x)"
+        ) { }
 
         public override bool Enable(NativeMemory pm, IntPtr baseAddress)
         {

@@ -151,8 +151,8 @@
                 
                 <!-- Title & Connection Status -->
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="16,0,0,0">
-                    <TextBlock Text="PVZ Fusion 3.6.1 修改器" Foreground="White" FontSize="16" FontWeight="Bold" VerticalAlignment="Center"/>
-                    <TextBlock Text="v7 GUI" Foreground="#FF3B82F6" FontSize="12" Margin="6,0,0,0" VerticalAlignment="Bottom" FontWeight="Medium"/>
+                    <TextBlock x:Name="Text_Title" Text="PVZ Fusion 3.6.1 修改器" Foreground="White" FontSize="16" FontWeight="Bold" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="Text_SubTitle" Text="v7 GUI" Foreground="#FF3B82F6" FontSize="12" Margin="6,0,0,0" VerticalAlignment="Bottom" FontWeight="Medium"/>
                     
                     <!-- Connected / Detached State -->
                     <Border x:Name="StatusDot" Width="8" Height="8" CornerRadius="4" Background="#FFEF4444" Margin="20,0,0,0" VerticalAlignment="Center"/>
@@ -161,6 +161,7 @@
 
                 <!-- Window Control Buttons -->
                 <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="0,0,8,0" VerticalAlignment="Center">
+                    <Button x:Name="Btn_Language" Content="EN" Style="{StaticResource WindowControlButtonStyle}" FontSize="12" Click="Language_Click" Margin="0,0,8,0"/>
                     <Button Content="—" Style="{StaticResource WindowControlButtonStyle}" Click="Min_Click"/>
                     <Button Content="✕" Style="{StaticResource WindowControlButtonStyle}" FontSize="14" Click="Close_Click"/>
                 </StackPanel>
@@ -184,8 +185,8 @@
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
                                 <StackPanel VerticalAlignment="Center" Margin="0,0,10,0">
-                                    <TextBlock Text="极速冷却 ×100" Foreground="White" FontSize="14" FontWeight="Bold"/>
-                                    <TextBlock Text="卡牌和手套瞬间冷却完毕" Foreground="#FFA0AEC0" FontSize="11" TextWrapping="Wrap" Margin="0,4,0,0"/>
+                                    <TextBlock x:Name="Text_CooldownTitle" Text="极速冷却 ×100" Foreground="White" FontSize="14" FontWeight="Bold"/>
+                                    <TextBlock x:Name="Text_CooldownDesc" Text="卡牌和手套瞬间冷却完毕" Foreground="#FFA0AEC0" FontSize="11" TextWrapping="Wrap" Margin="0,4,0,0"/>
                                 </StackPanel>
                                 <ToggleButton Grid.Column="1" x:Name="Toggle_Cooldown" Style="{StaticResource ToggleSwitchStyle}" Checked="Feature_Checked" Unchecked="Feature_Unchecked" IsEnabled="False"/>
                             </Grid>
@@ -199,8 +200,8 @@
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
                                 <StackPanel VerticalAlignment="Center" Margin="0,0,10,0">
-                                    <TextBlock Text="阳光越花越多" Foreground="White" FontSize="14" FontWeight="Bold"/>
-                                    <TextBlock Text="捡阳光或消耗阳光皆100倍增加" Foreground="#FFA0AEC0" FontSize="11" TextWrapping="Wrap" Margin="0,4,0,0"/>
+                                    <TextBlock x:Name="Text_SunTitle" Text="阳光越花越多" Foreground="White" FontSize="14" FontWeight="Bold"/>
+                                    <TextBlock x:Name="Text_SunDesc" Text="捡阳光或消耗阳光皆100倍增加" Foreground="#FFA0AEC0" FontSize="11" TextWrapping="Wrap" Margin="0,4,0,0"/>
                                 </StackPanel>
                                 <ToggleButton Grid.Column="1" x:Name="Toggle_Sun" Style="{StaticResource ToggleSwitchStyle}" Checked="Feature_Checked" Unchecked="Feature_Unchecked" IsEnabled="False"/>
                             </Grid>
@@ -214,8 +215,8 @@
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
                                 <StackPanel VerticalAlignment="Center" Margin="0,0,10,0">
-                                    <TextBlock Text="任意种植与重叠融合" Foreground="White" FontSize="14" FontWeight="Bold"/>
-                                    <TextBlock Text="打破地形限制重叠种植且可正常融合" Foreground="#FFA0AEC0" FontSize="11" TextWrapping="Wrap" Margin="0,4,0,0"/>
+                                    <TextBlock x:Name="Text_PlacementTitle" Text="任意种植与重叠融合" Foreground="White" FontSize="14" FontWeight="Bold"/>
+                                    <TextBlock x:Name="Text_PlacementDesc" Text="打破地形限制重叠种植且可正常融合" Foreground="#FFA0AEC0" FontSize="11" TextWrapping="Wrap" Margin="0,4,0,0"/>
                                 </StackPanel>
                                 <ToggleButton Grid.Column="1" x:Name="Toggle_Placement" Style="{StaticResource ToggleSwitchStyle}" Checked="Feature_Checked" Unchecked="Feature_Unchecked" IsEnabled="False"/>
                             </Grid>
@@ -229,8 +230,8 @@
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
                                 <StackPanel VerticalAlignment="Center" Margin="0,0,10,0">
-                                    <TextBlock Text="植物无敌" Foreground="White" FontSize="14" FontWeight="Bold"/>
-                                    <TextBlock Text="免疫啃食与秒杀，不影响爆炸自毁" Foreground="#FFA0AEC0" FontSize="11" TextWrapping="Wrap" Margin="0,4,0,0"/>
+                                    <TextBlock x:Name="Text_InvincibleTitle" Text="植物无敌" Foreground="White" FontSize="14" FontWeight="Bold"/>
+                                    <TextBlock x:Name="Text_InvincibleDesc" Text="免疫啃食与秒杀，不影响爆炸自毁" Foreground="#FFA0AEC0" FontSize="11" TextWrapping="Wrap" Margin="0,4,0,0"/>
                                 </StackPanel>
                                 <ToggleButton Grid.Column="1" x:Name="Toggle_Invincible" Style="{StaticResource ToggleSwitchStyle}" Checked="Feature_Checked" Unchecked="Feature_Unchecked" IsEnabled="False"/>
                             </Grid>
@@ -244,8 +245,8 @@
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
                                 <StackPanel VerticalAlignment="Center" Margin="0,0,10,0">
-                                    <TextBlock Text="僵尸一击必杀" Foreground="White" FontSize="14" FontWeight="Bold"/>
-                                    <TextBlock Text="僵尸受到任意微小伤害均会被秒杀" Foreground="#FFA0AEC0" FontSize="11" TextWrapping="Wrap" Margin="0,4,0,0"/>
+                                    <TextBlock x:Name="Text_OneHitKillTitle" Text="僵尸一击必杀" Foreground="White" FontSize="14" FontWeight="Bold"/>
+                                    <TextBlock x:Name="Text_OneHitKillDesc" Text="僵尸受到任意微小伤害均会被秒杀" Foreground="#FFA0AEC0" FontSize="11" TextWrapping="Wrap" Margin="0,4,0,0"/>
                                 </StackPanel>
                                 <ToggleButton Grid.Column="1" x:Name="Toggle_OneHitKill" Style="{StaticResource ToggleSwitchStyle}" Checked="Feature_Checked" Unchecked="Feature_Unchecked" IsEnabled="False"/>
                             </Grid>
@@ -259,8 +260,8 @@
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
                                 <StackPanel VerticalAlignment="Center" Margin="0,0,10,0">
-                                    <TextBlock Text="特定植物状态加速" Foreground="White" FontSize="14" FontWeight="Bold"/>
-                                    <TextBlock Text="大嘴花咀嚼与土豆地雷准备等加速20倍" Foreground="#FFA0AEC0" FontSize="11" TextWrapping="Wrap" Margin="0,4,0,0"/>
+                                    <TextBlock x:Name="Text_AccelerateTitle" Text="特定植物状态加速" Foreground="White" FontSize="14" FontWeight="Bold"/>
+                                    <TextBlock x:Name="Text_AccelerateDesc" Text="大嘴花咀嚼与土豆地雷准备等加速20倍" Foreground="#FFA0AEC0" FontSize="11" TextWrapping="Wrap" Margin="0,4,0,0"/>
                                 </StackPanel>
                                 <ToggleButton Grid.Column="1" x:Name="Toggle_Accelerate" Style="{StaticResource ToggleSwitchStyle}" Checked="Feature_Checked" Unchecked="Feature_Unchecked" IsEnabled="False"/>
                             </Grid>
@@ -282,8 +283,8 @@
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
                                 <StackPanel Margin="0,0,10,0">
-                                    <TextBlock Text="自由调节游戏整体速率" Foreground="White" FontSize="14" FontWeight="Bold"/>
-                                    <TextBlock Text="自由加速/减速游戏全局运行速率 (支持0.1x至10.0x)" Foreground="#FFA0AEC0" FontSize="11" Margin="0,4,0,0"/>
+                                    <TextBlock x:Name="Text_SpeedTitle" Text="自由调节游戏整体速率" Foreground="White" FontSize="14" FontWeight="Bold"/>
+                                    <TextBlock x:Name="Text_SpeedDesc" Text="自由加速/减速游戏全局运行速率 (支持0.1x至10.0x)" Foreground="#FFA0AEC0" FontSize="11" Margin="0,4,0,0"/>
                                 </StackPanel>
                                 <ToggleButton Grid.Column="1" x:Name="Toggle_Speed" Style="{StaticResource ToggleSwitchStyle}" Checked="SpeedFeature_Checked" Unchecked="SpeedFeature_Unchecked" IsEnabled="False"/>
                             </Grid>
@@ -299,7 +300,7 @@
                                 
                                 <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Width="80">
                                     <TextBlock x:Name="Text_SpeedValue" Text="1.0" Foreground="#FF10B981" FontSize="15" FontWeight="Bold" Width="40" TextAlignment="Right"/>
-                                    <TextBlock Text="x" Foreground="#FFA0AEC0" FontSize="14" FontWeight="Bold" Margin="2,0,0,0"/>
+                                    <TextBlock x:Name="Text_SpeedUnit" Text="x" Foreground="#FFA0AEC0" FontSize="14" FontWeight="Bold" Margin="2,0,0,0"/>
                                 </StackPanel>
                             </Grid>
                         </Grid>
@@ -320,8 +321,8 @@
 
                 <!-- Action Button Group -->
                 <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,16,0">
-                    <Button Content="一键开启所有" Style="{StaticResource ModernButtonStyle}" Margin="0,0,12,0" Click="Btn_EnableAll_Click"/>
-                    <Button Content="全部还原" Style="{StaticResource DangerButtonStyle}" Click="Btn_RestoreAll_Click"/>
+                    <Button x:Name="Btn_EnableAll" Content="一键开启所有" Style="{StaticResource ModernButtonStyle}" Margin="0,0,12,0" Click="Btn_EnableAll_Click"/>
+                    <Button x:Name="Btn_RestoreAll" Content="全部还原" Style="{StaticResource DangerButtonStyle}" Click="Btn_RestoreAll_Click"/>
                 </StackPanel>
             </Grid>
         </Grid>
