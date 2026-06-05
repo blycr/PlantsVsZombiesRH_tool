@@ -1,63 +1,60 @@
-# PVZ 融合版 3.6.1 修改器与辅助工具包 (v7)
+# 植物大战僵尸融合版 3.6.1 修改器与辅助工具
 
-本工具包专为 **《植物大战僵尸融合版 3.6.1》** 打造，提供游戏内动态开关极速冷却、阳光越花越多、任意种植与重叠、植物无敌、僵尸一击必杀、特定植物状态加速以及游戏整体速率调节等 7 大核心修改功能。全功能随开随关，安全稳定，且支持多种运行方式以满足不同用户的需求。
+本工具提供游戏内动态开关极速冷却、阳光越花越多、任意种植与重叠、植物无敌、僵尸一击必杀、特定植物状态加速以及游戏整体速率调节等 7 大核心修改功能。全功能随开随关，安全稳定，且支持多种运行方式以满足不同用户的需求。
 
 ---
 
-## 🚀 快速选择使用方式
+## 快速选择使用方式
 
 为了方便不同需求的用户，我们提供了以下四种使用方式，您可以直接选择最适合您的一种使用（无需配置其他方式）：
 
 | 运行选项 | 界面形式 | 推荐对象 | 环境依赖 | 对应文件/文件夹 |
 | :--- | :--- | :--- | :--- | :--- |
-| **方式 A（推荐）** | **图形界面修改器 (WPF GUI)** | 普通玩家，喜欢直观鼠标操作 | ❌ 免配置，直接运行（需 .NET 10） | [pvz_fusion_cheats_wpf.exe](file:///c:/Users/blycr/Desktop/sth/PC_PVZ-Fusion-3.6.1/pvz_fusion_cheats_wpf.exe) |
-| **方式 B** | **控制台快捷修改器 (C# Console)** | 喜欢终端交互、不想装 Python 的玩家 | ❌ 免配置，直接运行（需 .NET 10） | [pvz_fusion_cheats_cs.exe](file:///c:/Users/blycr/Desktop/sth/PC_PVZ-Fusion-3.6.1/pvz_fusion_cheats_cs.exe) |
-| **方式 C** | **Cheat Engine 表格 (CE Table)** | 喜欢使用 CE、想自定义修改或研究内存的玩家 | ⚠️ 需提前安装 [Cheat Engine](https://www.cheatengine.org/) | [pvz_fusion_cheats.ct](file:///c:/Users/blycr/Desktop/sth/PC_PVZ-Fusion-3.6.1/pvz_fusion_cheats.ct) |
-| **方式 D** | **Python 源码运行 (Developer)** | 开发者，需要修改逻辑或查看完整实现 | ⚙️ 需安装 Python 3.12 运行环境 | [pvz_fusion_cheats_v7.py](file:///c:/Users/blycr/Desktop/sth/PC_PVZ-Fusion-3.6.1/pvz_fusion_cheats_v7.py) |
+| **方式 A（推荐）** | **图形界面修改器 (WPF GUI)** | 普通玩家，喜欢直观鼠标操作 | 无需任何额外配置，直接运行（需 .NET 10 运行库） | [pvz_fusion_cheats_wpf.exe](file:///c:/Users/blycr/Desktop/sth/PC_PVZ-Fusion-3.6.1/pvz_fusion_cheats_wpf.exe) |
+| **方式 B** | **控制台快捷修改器 (C# Console)** | 喜欢终端交互、不想装 Python 的玩家 | 无需任何额外配置，直接运行（需 .NET 10 运行库） | [pvz_fusion_cheats_cs.exe](file:///c:/Users/blycr/Desktop/sth/PC_PVZ-Fusion-3.6.1/pvz_fusion_cheats_cs.exe) |
+| **方式 C** | **Cheat Engine 表格 (CE Table)** | 喜欢使用 CE、想自定义修改或研究内存的玩家 | 需要提前安装 [Cheat Engine](https://www.cheatengine.org/) 软件 | [pvz_fusion_cheats.ct](file:///c:/Users/blycr/Desktop/sth/PC_PVZ-Fusion-3.6.1/pvz_fusion_cheats.ct) |
+| **方式 D** | **Python 源码运行** | 开发者，需要修改逻辑或查看完整实现 | 需要安装 Python 3.12 运行环境 | [pvz_fusion_cheats_v7.py](file:///c:/Users/blycr/Desktop/sth/PC_PVZ-Fusion-3.6.1/pvz_fusion_cheats_v7.py) |
 
 ---
 
-## 🛠️ 各方式详细使用指南
+## 各方式详细使用指南
 
 ### 方式 A：图形界面修改器 (WPF GUI)
 这是对大部分玩家最友好、操作最简单的方案。
 1. **启动游戏**：双击运行 [PlantsVsZombiesRH.exe](file:///c:/Users/blycr/Desktop/sth/PC_PVZ-Fusion-3.6.1/PlantsVsZombiesRH.exe) 并进入任意关卡。
 2. **运行修改器**：直接双击运行根目录下的 [pvz_fusion_cheats_wpf.exe](file:///c:/Users/blycr/Desktop/sth/PC_PVZ-Fusion-3.6.1/pvz_fusion_cheats_wpf.exe)。
-3. **功能控制**：在弹出的精致图形界面中，直接通过**勾选框**开启/关闭对应的功能，使用**滑动条**或输入数值来无级调节游戏运行速率。
-> **💡 权限说明**：修改器配备了智能权限自适应机制。如果游戏以普通权限启动，修改器也无需管理员权限，双击直接运行即可，免除手动提权烦恼。
+3. **功能控制**：在图形界面窗口中，直接通过勾选框开启或关闭对应功能，使用滑动条或输入数值调节游戏运行速率。
+> **权限说明**：修改器配备了智能权限自适应机制。如果游戏以普通权限启动，修改器也无需管理员权限，双击直接运行即可，免除手动提权烦恼。
 
 ---
 
 ### 方式 B：控制台修改器 (C# Console)
-适合喜欢命令行交互但不想安装 Python 环境的用户。
 1. **启动游戏**：进入任意游戏关卡。
 2. **运行修改器**：直接双击运行根目录下的 [pvz_fusion_cheats_cs.exe](file:///c:/Users/blycr/Desktop/sth/PC_PVZ-Fusion-3.6.1/pvz_fusion_cheats_cs.exe)。
-3. **功能控制**：根据命令行窗口中显示的菜单，输入对应的数字（`1`~`7`）或字母（`A` 一键开启，`R` 还原重置，`Q` 还原并退出）并按回车即可。
+3. **功能控制**：根据命令行窗口中显示的菜单，输入对应的数字（`1`至`7`）或字母（`A` 一键开启，`R` 还原重置，`Q` 还原并退出）并按回车即可。
 
 ---
 
 ### 方式 C：Cheat Engine 表格 (CE Table)
-如果您是 Cheat Engine 的忠实用户，可以使用已封装好的 `.ct` 文件。
 1. **安装软件**：确保系统中已安装 [Cheat Engine](https://www.cheatengine.org/) (推荐 7.4 或更高版本)。
 2. **启动游戏**：进入游戏关卡。
 3. **打开表格**：双击根目录下的 [pvz_fusion_cheats.ct](file:///c:/Users/blycr/Desktop/sth/PC_PVZ-Fusion-3.6.1/pvz_fusion_cheats.ct)。
-4. **附加进程**：在 Cheat Engine 中点击左上角绿色的电脑图标，在进程列表中选中 `PlantsVsZombiesRH.exe` 并点击 Open（附加）。
+4. **附加进程**：在 Cheat Engine 中点击左上角的电脑图标，在进程列表中选中 `PlantsVsZombiesRH.exe` 并点击 Open。
 5. **激活功能**：在 CE 底部的地址列表中，勾选对应功能左侧的激活方块。
 
 ---
 
-### 方式 D：Python 源码运行（开发者模式）
-如果您想深入研究修改器的内存 Hook 机制、跳转溢出处理或重新编写汇编 Shellcode，可以使用此方式。
+### 方式 D：Python 源码运行
 #### 1. 环境准备
-* **步骤一**：安装极速 Python 包管理器 `uv`（推荐）：
+* **安装 uv 包管理器**：
   ```powershell
   powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
   ```
-  安装完成后重启终端，验证安装：
+  安装完成后重启终端并验证：
   ```bash
   uv --version
   ```
-* **步骤二**：通过 `uv` 安装 Python 3.12：
+* **安装 Python 3.12**：
   ```bash
   uv python install 3.12
   ```
@@ -68,11 +65,11 @@
    ```bash
    .venv\Scripts\python pvz_fusion_cheats_v7.py
    ```
-3. 在命令行交互菜单中输入指令控制。
+3. 根据交互式菜单输入数字切换选项状态。
 
 ---
 
-## 📋 功能明细说明
+## 功能明细说明
 
 | 快捷键 | 功能名称 | 详细效果与游戏表现 |
 | :---: | :--- | :--- |
@@ -86,8 +83,8 @@
 
 ---
 
-## ⚠️ 注意事项
+## 注意事项
 
-- **运行库说明**：若运行 `*.exe` 方式时系统提示缺少 .NET 运行库，说明您的 Windows 系统未安装 `.NET 10` 环境。您可以直接在系统弹出的提示中下载安装，或选择**方式 C (CE 表格)** 或 **方式 D (Python 源码)** 运行。
+- **运行库说明**：若运行 `*.exe` 方式时系统提示缺少 .NET 运行库，说明您的 Windows 系统未安装 `.NET 10` 环境。您可以直接在系统弹出的提示中下载安装，或选择方式 C (CE 表格) 或 方式 D (Python 源码) 运行。
 - **纯内存操作**：本工具包所有修改方案均为纯内存操作，不修改游戏本身的存档或文件，关闭修改器后游戏即刻恢复原状，安全无后顾之忧。
 - **版本绑定**：所有内存特征码与硬编码偏移均针对 **PVZ 融合版 3.6.1** 进行了适配与校验，其他版本不保证能正常工作。
