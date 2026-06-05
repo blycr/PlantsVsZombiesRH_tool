@@ -337,14 +337,18 @@ namespace pvz_fusion_cheats_wpf
             if (!attached || pm == null) return;
             ignoreEvents = true;
 
-            if (!cooldownFeature.Enabled) { cooldownFeature.Enable(pm, baseAddress); Toggle_Cooldown.IsChecked = cooldownFeature.Enabled; }
-            if (!sunFeature.Enabled) { sunFeature.Enable(pm, baseAddress); Toggle_Sun.IsChecked = sunFeature.Enabled; }
-            if (!placementFeature.Enabled) { placementFeature.Enable(pm, baseAddress); Toggle_Placement.IsChecked = placementFeature.Enabled; }
-            if (!invincibleFeature.Enabled) { invincibleFeature.Enable(pm, baseAddress); Toggle_Invincible.IsChecked = invincibleFeature.Enabled; }
-            if (!oneHitKillFeature.Enabled) { oneHitKillFeature.Enable(pm, baseAddress); Toggle_OneHitKill.IsChecked = oneHitKillFeature.Enabled; }
-            if (!accelerateFeature.Enabled) { accelerateFeature.Enable(pm, baseAddress); Toggle_Accelerate.IsChecked = accelerateFeature.Enabled; }
+            int success = 0;
+            if (!cooldownFeature.Enabled) { if (cooldownFeature.Enable(pm, baseAddress)) { Toggle_Cooldown.IsChecked = true; success++; } }
+            if (!sunFeature.Enabled) { if (sunFeature.Enable(pm, baseAddress)) { Toggle_Sun.IsChecked = true; success++; } }
+            if (!placementFeature.Enabled) { if (placementFeature.Enable(pm, baseAddress)) { Toggle_Placement.IsChecked = true; success++; } }
+            if (!invincibleFeature.Enabled) { if (invincibleFeature.Enable(pm, baseAddress)) { Toggle_Invincible.IsChecked = true; success++; } }
+            if (!oneHitKillFeature.Enabled) { if (oneHitKillFeature.Enable(pm, baseAddress)) { Toggle_OneHitKill.IsChecked = true; success++; } }
+            if (!accelerateFeature.Enabled) { if (accelerateFeature.Enable(pm, baseAddress)) { Toggle_Accelerate.IsChecked = true; success++; } }
 
             ignoreEvents = false;
+
+            StatusLabel.Text = T($"一键开启完成！共新激活了 {success} 项功能。", $"Enable-all completed! Newly activated {success} features.");
+            StatusLabel.Foreground = new SolidColorBrush(Color.FromRgb(16, 185, 129));
         }
 
         private void Btn_RestoreAll_Click(object sender, RoutedEventArgs e)
@@ -365,6 +369,9 @@ namespace pvz_fusion_cheats_wpf
             Slider_Speed.IsEnabled = false;
 
             ignoreEvents = false;
+
+            StatusLabel.Text = T("全部修改已还原！", "All features restored successfully!");
+            StatusLabel.Foreground = new SolidColorBrush(Color.FromRgb(16, 185, 129));
         }
 
         private void Btn_AdminRelaunch_Click(object sender, RoutedEventArgs e)

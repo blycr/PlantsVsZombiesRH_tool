@@ -1107,7 +1107,7 @@ namespace pvz_fusion_cheats_cs
                 }
                 else if (choice == "R")
                 {
-                    lastErr = T("正在重置所有补丁...", "Resetting all patches...");
+                    Console.WriteLine(T("\n[*] 正在重置所有补丁...", "\n[*] Resetting all patches..."));
                     foreach (var f in _features)
                     {
                         if (f.Enabled) f.Disable(_pm, _baseAddress, this);
@@ -1116,14 +1116,23 @@ namespace pvz_fusion_cheats_cs
                 }
                 else if (choice == "A")
                 {
-                    lastErr = T("正在一键开启所有功能...", "Enabling all features...");
+                    Console.WriteLine(T("\n[*] 正在一键开启所有功能...", "\n[*] Enabling all features..."));
                     int success = 0;
                     foreach (var f in _features)
                     {
                         if (f.Key == "7") continue; // Skip speed regulation
                         if (!f.Enabled)
                         {
-                            if (f.Enable(_pm, _baseAddress, this)) success++;
+                            Console.WriteLine(T($"[*] 正在开启 {f.Name} ...", $"[*] Enabling {f.Name} ..."));
+                            if (f.Enable(_pm, _baseAddress, this))
+                            {
+                                success++;
+                                Console.WriteLine(T($"[+] {f.Name} 开启成功", $"[+] {f.Name} enabled successfully"));
+                            }
+                            else
+                            {
+                                Console.WriteLine(T($"[-] {f.Name} 开启失败", $"[-] {f.Name} failed to enable"));
+                            }
                         }
                     }
                     lastErr = T($"一键开启完成！共新激活了 {success} 项功能。", $"Enable-all completed! Newly activated {success} features.");
