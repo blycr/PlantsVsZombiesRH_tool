@@ -276,7 +276,7 @@ namespace pvz_fusion_cheats_wpf
                     toggle.IsChecked = false;
                     ignoreEvents = false;
                     MessageBox.Show(
-                        T($"激活失败: '{feature.Name}'，请确认已进入关卡内。", $"Activation failed: '{feature.Name}', make sure you are in a level."), 
+                        T($"开启失败: '{feature.Name}'，请确认已进入关卡。", $"Activation failed: '{feature.Name}', make sure you are in a level."), 
                         T("提示", "Tip"), 
                         MessageBoxButton.OK, 
                         MessageBoxImage.Warning
@@ -306,7 +306,7 @@ namespace pvz_fusion_cheats_wpf
                 Slider_Speed.IsEnabled = false;
                 ignoreEvents = false;
                 MessageBox.Show(
-                    T("激活游戏变速失败，请确认已在关卡内。", "Failed to activate game speed adjustment, make sure you are in a level."), 
+                    T("开启游戏变速失败，请确认已进入关卡。", "Failed to activate game speed adjustment, make sure you are in a level."), 
                     T("提示", "Tip"), 
                     MessageBoxButton.OK, 
                     MessageBoxImage.Warning
@@ -347,7 +347,7 @@ namespace pvz_fusion_cheats_wpf
 
             ignoreEvents = false;
 
-            StatusLabel.Text = T($"一键开启完成！共新激活了 {success} 项功能。", $"Enable-all completed! Newly activated {success} features.");
+            StatusLabel.Text = T($"一键开启完成，已开启 {success} 项功能。", $"Enable-all completed! Newly activated {success} features.");
             StatusLabel.Foreground = new SolidColorBrush(Color.FromRgb(16, 185, 129));
         }
 
@@ -370,7 +370,7 @@ namespace pvz_fusion_cheats_wpf
 
             ignoreEvents = false;
 
-            StatusLabel.Text = T("全部修改已还原！", "All features restored successfully!");
+            StatusLabel.Text = T("所有修改已恢复。", "All features restored.");
             StatusLabel.Foreground = new SolidColorBrush(Color.FromRgb(16, 185, 129));
         }
 

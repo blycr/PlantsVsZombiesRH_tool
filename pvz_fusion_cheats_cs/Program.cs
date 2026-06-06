@@ -79,7 +79,7 @@ namespace pvz_fusion_cheats_cs
             }
 
             Console.WriteLine(Program.T($"[*] 正在还原 {Name} 的修改点...", $"[*] Restoring patch points for {Name}..."));
-            // Reverse restore to prevent race conditions in nested hooks
+            // Restore in reverse order to avoid race conditions in nested hooks
             for (int i = Patches.Count - 1; i >= 0; i--)
             {
                 var patch = Patches[i];
@@ -114,7 +114,7 @@ namespace pvz_fusion_cheats_cs
             Caves.Clear();
         }
 
-        // Helper helpers
+        // Helper methods
         protected static byte[] MakeJmp(IntPtr from, IntPtr to)
         {
             int offset = (int)((long)to - ((long)from + 5));
@@ -146,7 +146,7 @@ namespace pvz_fusion_cheats_cs
         public CooldownFeature() : base(
             "1",
             "极速冷却 ×100", "Instant Cooldown x100",
-            "所有卡牌和手套的CD瞬间冷却完毕", "Seed packets, gloves, and hammers cool down instantly"
+            "所有卡牌和手套冷却立即完成", "Seed packets, gloves, and hammers cool down immediately"
         ) { }
 
         public override bool Enable(NativeMemory pm, IntPtr baseAddress, Program modifier)
@@ -242,7 +242,7 @@ namespace pvz_fusion_cheats_cs
         public SunFeature() : base(
             "2",
             "阳光越花越多", "Multiplying Sun",
-            "捡阳光或种植消耗阳光时，阳光皆为 100 倍增加", "Picking up or consuming sun increases sun by 100x"
+            "捡阳光或种植消耗阳光时，阳光都会 100 倍增加", "Picking up or consuming sun increases sun by 100x"
         ) { }
 
         public override bool Enable(NativeMemory pm, IntPtr baseAddress, Program modifier)
@@ -383,7 +383,7 @@ namespace pvz_fusion_cheats_cs
         public PlacementFeature() : base(
             "3",
             "任意种植与重叠融合", "Free Planting & Overlap",
-            "解除地形限制可水面重叠种植，且保留兼容植物自动融合逻辑", "Plant anywhere including water/roof, overlapping compatible plants fuses them"
+            "解除地形限制，可水面重叠种植，兼容植物自动融合", "Plant anywhere including water/roof, overlapping compatible plants fuses them"
         ) { }
 
         public override bool Enable(NativeMemory pm, IntPtr baseAddress, Program modifier)
@@ -462,7 +462,7 @@ namespace pvz_fusion_cheats_cs
         public InvincibleFeature() : base(
             "4",
             "植物无敌", "Invincible Plants",
-            "植物免疫啃食/秒杀/碾压/落水，且不影响铲除与爆炸自毁", "Plants immune to chewing/instant kills, shovel-up & explosions still destroy them"
+            "植物免疫啃食/秒杀/碾压/落水，铲除与爆炸仍可销毁", "Plants ignore chewing and instant kills; shovel and explosions still work"
         ) { }
 
         public override bool Enable(NativeMemory pm, IntPtr baseAddress, Program modifier)
@@ -570,7 +570,7 @@ namespace pvz_fusion_cheats_cs
         public OneHitKillFeature() : base(
             "5",
             "僵尸一击必杀", "One-Hit Kill Zombies",
-            "所有僵尸在受到任意伤害时立即死亡", "All zombies die immediately upon taking any damage"
+            "所有僵尸受任何伤害即死", "All zombies die immediately upon taking any damage"
         ) { }
 
         public override bool Enable(NativeMemory pm, IntPtr baseAddress, Program modifier)
@@ -660,7 +660,7 @@ namespace pvz_fusion_cheats_cs
         public AccelerateFeature() : base(
             "6",
             "特定植物状态加速", "Specific Plant Speedup",
-            "大嘴花咀嚼与土豆地雷准备等时间加速 20 倍 (非瞬爆，保留正常动作)", "Chomper chewing and Potato Mine arming runs 20x faster, retaining animations"
+            "大嘴花咀嚼与土豆地雷准备等时间加速 20 倍 (保持动画)", "Chomper chewing and Potato Mine arming run 20x faster (animations preserved)"
         ) { }
 
         public override bool Enable(NativeMemory pm, IntPtr baseAddress, Program modifier)
@@ -824,7 +824,7 @@ namespace pvz_fusion_cheats_cs
         public SpeedFeature() : base(
             "7",
             "自由调节游戏整体速率", "Game Speed Controller",
-            "自由调节游戏整体运行速率 (支持加速/减速，默认 1.0x)", "Smooth global game speed adjustment from 0.1x to 10.0x (default 1.0x)"
+            "自由调节游戏整体运行速率 (支持加速/减速，默认 1.0x)", "Adjust global game speed from 0.1x to 10.0x (default 1.0x)"
         ) { }
 
         public string GetSpeedStatusStr()
@@ -836,20 +836,20 @@ namespace pvz_fusion_cheats_cs
 
         public override string OnClick(NativeMemory pm, IntPtr baseAddress, Program modifier)
         {
-            Console.Write(Program.T("\n[*] 请输入新的游戏速度倍率 (范围 0.1 ~ 10.0，输入 1.0 恢复常规): ", "\n[*] Please enter new game speed (range 0.1 ~ 10.0, enter 1.0 for normal): "));
+            Console.Write(Program.T("\n[*] 输入游戏速度倍率 (范围 0.1 ~ 10.0，输入 1.0 恢复正常): ", "\n[*] Enter game speed (range 0.1 ~ 10.0, enter 1.0 for normal): "));
             string valStr = Console.ReadLine()?.Trim();
             if (double.TryParse(valStr, out double val))
             {
                 if (val < 0.1 || val > 10.0)
                 {
-                    return Program.T("速度倍率超出安全范围 (0.1 ~ 10.0)", "Speed value out of safe range (0.1 ~ 10.0)");
+                    return Program.T("速度倍率超出范围 (0.1 ~ 10.0)", "Speed value out of range (0.1 ~ 10.0)");
                 }
 
                 if (SetSpeed(pm, baseAddress, val))
                 {
                     Speed = val;
                     Enabled = (val != 1.0);
-                    return Program.T($"游戏速度已成功设置为 {val}x", $"Game speed successfully set to {val}x");
+                    return Program.T($"游戏速度已设为 {val}x", $"Game speed set to {val}x");
                 }
                 else
                 {
@@ -995,7 +995,7 @@ namespace pvz_fusion_cheats_cs
             if (_pm.Attach("PlantsVsZombiesRH", "GameAssembly.dll"))
             {
                 _baseAddress = _pm.BaseAddress;
-                Console.WriteLine(T($"[+] 已成功附加游戏进程，GameAssembly.dll 基址: 0x{_baseAddress.ToInt64():X}", $"[+] Successfully attached to game process. GameAssembly.dll base: 0x{_baseAddress.ToInt64():X}"));
+                Console.WriteLine(T($"[+] 已附加游戏进程，GameAssembly.dll 基址: 0x{_baseAddress.ToInt64():X}", $"[+] Attached to game process. GameAssembly.dll base: 0x{_baseAddress.ToInt64():X}"));
                 return "SUCCESS";
             }
 
@@ -1011,7 +1011,7 @@ namespace pvz_fusion_cheats_cs
 
         private void RestoreAll()
         {
-            Console.WriteLine(T("\n[*] 正在还原所有内存补丁并清理资源...", "\n[*] Restoring all memory patches and cleaning resources..."));
+            Console.WriteLine(T("\n[*] 还原所有内存补丁并清理资源...", "\n[*] Restoring all memory patches and cleaning resources..."));
             foreach (var f in _features)
             {
                 if (f.Enabled)
@@ -1020,7 +1020,7 @@ namespace pvz_fusion_cheats_cs
                 }
                 f.Cleanup(_pm);
             }
-            Console.WriteLine(T("[+] 所有修改点已恢复原样", "[+] All patches successfully restored"));
+            Console.WriteLine(T("[+] 所有修改点已还原", "[+] All patches restored"));
         }
 
         public void RunLoop()
@@ -1031,7 +1031,7 @@ namespace pvz_fusion_cheats_cs
                 if (!_pm.IsGameRunning())
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine(T("\n[-] 检测到游戏进程已退出，正在执行自动清理...", "\n[-] Game process exit detected. Performing auto cleanup..."));
+                    Console.WriteLine(T("\n[-] 游戏进程已退出，执行清理...", "\n[-] Game process exited. Cleaning up..."));
                     Console.ResetColor();
                     break;
                 }
@@ -1075,8 +1075,8 @@ namespace pvz_fusion_cheats_cs
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine("-----------------------------------------------------------------------------------------");
                 Console.ResetColor();
-                Console.WriteLine(T(" [A] 一键开启所有功能", " [A] Enable all features"));
-                Console.WriteLine(T(" [R] 还原所有修改 (全部重置)", " [R] Restore all patches (Reset)"));
+                Console.WriteLine(T(" [A] 开启全部功能", " [A] Enable all features"));
+                Console.WriteLine(T(" [R] 还原所有修改", " [R] Restore all patches"));
                 Console.WriteLine(T(" [Q] 还原并退出修改器", " [Q] Restore and Exit"));
                 Console.WriteLine(T($" [L] 切换语言 / Switch Language (当前: {(IsEnglish ? "EN" : "CN")})", $" [L] Switch Language / 切换语言 (Current: {(IsEnglish ? "EN" : "CN")})"));
                 Console.ForegroundColor = ConsoleColor.Cyan;
@@ -1107,27 +1107,27 @@ namespace pvz_fusion_cheats_cs
                 }
                 else if (choice == "R")
                 {
-                    Console.WriteLine(T("\n[*] 正在重置所有补丁...", "\n[*] Resetting all patches..."));
+                    Console.WriteLine(T("\n[*] 重置所有补丁...", "\n[*] Resetting all patches..."));
                     foreach (var f in _features)
                     {
                         if (f.Enabled) f.Disable(_pm, _baseAddress, this);
                     }
-                    lastErr = T("所有补丁重置完成！", "All patches reset successfully!");
+                    lastErr = T("所有补丁已重置", "All patches reset");
                 }
                 else if (choice == "A")
                 {
-                    Console.WriteLine(T("\n[*] 正在一键开启所有功能...", "\n[*] Enabling all features..."));
+                    Console.WriteLine(T("\n[*] 开启全部功能...", "\n[*] Enabling all features..."));
                     int success = 0;
                     foreach (var f in _features)
                     {
                         if (f.Key == "7") continue; // Skip speed regulation
                         if (!f.Enabled)
                         {
-                            Console.WriteLine(T($"[*] 正在开启 {f.Name} ...", $"[*] Enabling {f.Name} ..."));
+                            Console.WriteLine(T($"[*] 开启 {f.Name} ...", $"[*] Enabling {f.Name} ..."));
                             if (f.Enable(_pm, _baseAddress, this))
                             {
                                 success++;
-                                Console.WriteLine(T($"[+] {f.Name} 开启成功", $"[+] {f.Name} enabled successfully"));
+                                Console.WriteLine(T($"[+] {f.Name} 已开启", $"[+] {f.Name} enabled"));
                             }
                             else
                             {
@@ -1135,7 +1135,7 @@ namespace pvz_fusion_cheats_cs
                             }
                         }
                     }
-                    lastErr = T($"一键开启完成！共新激活了 {success} 项功能。", $"Enable-all completed! Newly activated {success} features.");
+                    lastErr = T($"全部开启完成，新激活 {success} 项功能。", $"All features enabled. Newly activated: {success}.");
                 }
                 else
                 {
@@ -1176,7 +1176,7 @@ namespace pvz_fusion_cheats_cs
                 if (!IsAdmin())
                 {
                     Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine(T("[!] 权限不足，正在通过 UAC 请求管理员权限...", "[!] Insufficient privileges, requesting admin elevation via UAC..."));
+                    Console.WriteLine(T("[!] 权限不足，请求 UAC 提升...", "[!] Insufficient privileges, requesting UAC elevation..."));
                     Console.ResetColor();
                     Thread.Sleep(1000);
                     ElevateUac();
@@ -1185,7 +1185,7 @@ namespace pvz_fusion_cheats_cs
                 else
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine(T("[-] 已经是管理员但仍无法打开游戏进程，可能被安全软件拦截。", "[-] Already running as Admin but still cannot open game process. It might be blocked by security software."));
+                    Console.WriteLine(T("[-] 已是管理员但仍无法打开游戏进程，可能被安全软件拦截。", "[-] Running as Admin but still cannot open game process. May be blocked by security software."));
                     Console.ResetColor();
                     Console.WriteLine(T("\n按任意键退出...", "\nPress any key to exit..."));
                     Console.ReadLine();
@@ -1195,7 +1195,7 @@ namespace pvz_fusion_cheats_cs
             else if (status == "NOT_RUNNING")
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(T("[-] 游戏未运行，请先启动 PlantsVsZombiesRH.exe 并进入关卡。", "[-] Game is not running. Please start PlantsVsZombiesRH.exe and enter a level first."));
+                Console.WriteLine(T("[-] 游戏未运行，先启动 PlantsVsZombiesRH.exe 并进入关卡。", "[-] Game not running. Start PlantsVsZombiesRH.exe and enter a level first."));
                 Console.ResetColor();
                 Console.WriteLine(T("\n按任意键退出...", "\nPress any key to exit..."));
                 Console.ReadLine();
@@ -1210,7 +1210,7 @@ namespace pvz_fusion_cheats_cs
             catch (Exception e)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(T($"[-] 修改器运行时发生未捕获异常: {e.Message}", $"[-] Trainer encountered an uncaught exception: {e.Message}"));
+                Console.WriteLine(T($"[-] 修改器异常: {e.Message}", $"[-] Trainer exception: {e.Message}"));
                 Console.ResetColor();
                 Console.WriteLine(T("\n按任意键退出...", "\nPress any key to exit..."));
                 Console.ReadLine();

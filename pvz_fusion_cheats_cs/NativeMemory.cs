@@ -71,7 +71,7 @@ namespace pvz_fusion_cheats_cs
             }
             catch
             {
-                // If permission is denied during module enumeration, we catch and return false to trigger UAC elevation.
+                // Catch permission denied during module enumeration and return false to trigger UAC elevation.
             }
             return false;
         }
@@ -161,7 +161,7 @@ namespace pvz_fusion_cheats_cs
             IntPtr alloc = Allocate((uint)size, nearAddress);
             if (alloc != IntPtr.Zero) return alloc;
 
-            throw new Exception($"Cannot find or allocate code cave near 0x{nearAddress.ToInt64():X}");
+            throw new Exception($"Failed to find or allocate code cave near 0x{nearAddress.ToInt64():X}");
         }
 
         public IntPtr FindPattern(byte[] pattern, int startOffset, int endOffset)

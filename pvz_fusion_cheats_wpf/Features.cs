@@ -88,7 +88,7 @@ namespace pvz_fusion_cheats_wpf
             Caves.Clear();
         }
 
-        // Helper helpers
+        // Helper methods
         protected static byte[] MakeJmp(IntPtr from, IntPtr to)
         {
             int offset = (int)((long)to - ((long)from + 5));
@@ -119,8 +119,8 @@ namespace pvz_fusion_cheats_wpf
 
         public CooldownFeature() : base(
             "1",
-            "极速冷却 ×100", "Instant Cooldown x100",
-            "所有卡牌和手套的CD瞬间冷却完毕", "Seed packets, gloves, and hammers cool down instantly"
+            "即时冷却 ×100", "Instant Cooldown x100",
+            "卡牌和手套冷却立即完成", "Seed packets, gloves, and hammers cool down instantly"
         ) { }
 
         public override bool Enable(NativeMemory pm, IntPtr baseAddress)
@@ -203,7 +203,7 @@ namespace pvz_fusion_cheats_wpf
         public SunFeature() : base(
             "2",
             "阳光越花越多", "Multiplying Sun",
-            "捡阳光或种植消耗阳光时，阳光皆为 100 倍增加", "Picking up or consuming sun increases sun by 100x"
+            "捡阳光或种植时，阳光都会 100 倍增加", "Picking up or consuming sun increases sun by 100x"
         ) { }
 
         public override bool Enable(NativeMemory pm, IntPtr baseAddress)
@@ -319,7 +319,7 @@ namespace pvz_fusion_cheats_wpf
         public PlacementFeature() : base(
             "3",
             "任意种植与重叠融合", "Free Planting & Overlap",
-            "解除地形限制可水面重叠种植，且保留兼容植物自动融合逻辑", "Plant anywhere including water/roof, overlapping compatible plants fuses them"
+            "解除地形限制，可在水面重叠种植，保留植物自动融合", "Plant anywhere including water/roof, overlapping compatible plants fuses them"
         ) { }
 
         public override bool Enable(NativeMemory pm, IntPtr baseAddress)
@@ -388,7 +388,7 @@ namespace pvz_fusion_cheats_wpf
         public InvincibleFeature() : base(
             "4",
             "植物无敌", "Invincible Plants",
-            "植物免疫啃食/秒杀/碾压/落水，且不影响铲除与爆炸自毁", "Plants immune to chewing/instant kills, shovel-up & explosions still destroy them"
+            "植物免疫啃食/秒杀/碾压/落水，不影响铲除与爆炸自毁", "Plants immune to chewing/instant kills, shovel-up & explosions still destroy them"
         ) { }
 
         public override bool Enable(NativeMemory pm, IntPtr baseAddress)
@@ -482,7 +482,7 @@ namespace pvz_fusion_cheats_wpf
         public OneHitKillFeature() : base(
             "5",
             "僵尸一击必杀", "One-Hit Kill Zombies",
-            "所有僵尸在受到任意伤害时立即死亡", "All zombies die immediately upon taking any damage"
+            "僵尸受到任何伤害立即死亡", "All zombies die immediately upon taking any damage"
         ) { }
 
         public override bool Enable(NativeMemory pm, IntPtr baseAddress)
@@ -560,7 +560,7 @@ namespace pvz_fusion_cheats_wpf
         public AccelerateFeature() : base(
             "6",
             "特定植物状态加速", "Specific Plant Speedup",
-            "大嘴花咀嚼与土豆地雷准备等时间加速 20 倍 (非瞬爆，保留正常动作)", "Chomper chewing and Potato Mine arming runs 20x faster, retaining animations"
+            "大嘴花咀嚼与土豆地雷准备等状态加速 20 倍（非瞬爆，保留正常动作）", "Chomper chewing and Potato Mine arming runs 20x faster, retaining animations"
         ) { }
 
         public override bool Enable(NativeMemory pm, IntPtr baseAddress)
@@ -682,8 +682,8 @@ namespace pvz_fusion_cheats_wpf
 
         public SpeedFeature() : base(
             "7",
-            "自由调节游戏整体速率", "Game Speed Controller",
-            "自由调节游戏整体运行速率 (支持加速/减速，默认 1.0x)", "Smooth global game speed adjustment from 0.1x to 10.0x (default 1.0x)"
+            "游戏速率调节", "Game Speed Controller",
+            "调节游戏整体运行速率（支持加速/减速，默认 1.0x）", "Adjust global game speed from 0.1x to 10.0x (default 1.0x)"
         ) { }
 
         public override bool Enable(NativeMemory pm, IntPtr baseAddress)
