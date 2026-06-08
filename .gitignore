@@ -235,3 +235,12 @@ pvz_fusion_cheats_wpf/bin/
 pvz_fusion_cheats_wpf/obj/
 pvz_fusion_cheats_wpf.exe
 .vs/
+
+# IDE config
+.gemini/
+
+# Dump tools
+/Il2CppDumper-win-v6.7.46/
+
+# Game update notice
+/融合版3.7版本更新公告.txt
