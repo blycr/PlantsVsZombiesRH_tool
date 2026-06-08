@@ -60,3 +60,11 @@ Pick one. No extra setup needed.
 
 * **Pure Memory Trainer**: Only touches game memory. Does not modify save files or local data. Game returns to normal once the trainer exits.
 * **Version Locked**: All memory offsets and signatures are tailored for "Plants vs. Zombies Fusion Edition 3.7". Other versions may not work.
+
+---
+
+## License & Disclaimer
+
+* **100% Free**: This trainer (including all compiled `.exe` binaries, `.ct` files, and Python source code) is **completely free**. If you paid any money to obtain this tool, you have been scammed.
+* **Non-Commercial Use**: This project is licensed under a custom **Non-Commercial, Educational Use Only and Anti-Scam License**. Any commercial distribution, resale, or packaging is strictly prohibited.
+* **Disclaimer**: This tool is provided solely for personal offline entertainment and educational research. The author holds no liability for any game crashes, data corruption, or any other issues resulting from its usage.
