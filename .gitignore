@@ -244,3 +244,15 @@ pvz_fusion_cheats_wpf.exe
 
 # Game update notice
 /融合版3.7版本更新公告.txt
+
+# Release signing secrets (public key minisign.pub is committed)
+/signing/
+*.key
+.minisign/
+
+# Local portable tools
+/tools/
+
+# Generated release checksums (publish on GitHub Release only)
+/SHA256SUMS
+/SHA256SUMS.minisig

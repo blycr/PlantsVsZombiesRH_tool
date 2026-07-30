@@ -61,6 +61,43 @@ Pick one. No extra setup needed.
 * **Pure Memory Trainer**: Only touches game memory. Does not modify save files or local data. Game returns to normal once the trainer exits.
 * **Version Locked**: All memory offsets and signatures are tailored for "Plants vs. Zombies Fusion Edition 3.8.1". Other versions may not work.
 * **Best used in a level**: Attaching may succeed on the main menu, but most effects only show up after a level starts.
+* **Trust only official Releases**: Download only from this repo's [GitHub Releases](https://github.com/blycr/PlantsVsZombiesRH_tool/releases). Paid mirrors and repacked archives are not supported.
+
+---
+
+## Verify Downloads (anti-tamper)
+
+Each formal Release includes a `SHA256SUMS` file. Check hashes after download so you can detect corruption or swapped files.
+
+### Method 1: PowerShell (recommended)
+
+In the folder that contains the release files and `SHA256SUMS`:
+
+```powershell
+Get-Content .\SHA256SUMS
+Get-FileHash .\pvz_fusion_cheats_wpf.exe -Algorithm SHA256
+Get-FileHash .\pvz_fusion_cheats_cs.exe -Algorithm SHA256
+Get-FileHash .\pvz_fusion_cheats.ct -Algorithm SHA256
+Get-FileHash .\pvz_fusion_cheats_v9.py -Algorithm SHA256
+```
+
+Hashes must match the corresponding lines in `SHA256SUMS` (case-insensitive).
+
+If you cloned this repo, you can also batch-verify:
+
+```powershell
+pwsh .\scripts\verify-release.ps1 -Dir path\to\download\folder
+```
+
+### Method 2: Optional minisign signature
+
+If the release also ships `SHA256SUMS.minisig` and the repo contains `minisign.pub`, you can verify that the checksum list itself was signed by the author (requires [minisign](https://jedisct1.github.io/minisign/)):
+
+```powershell
+minisign -V -p minisign.pub -m SHA256SUMS -x SHA256SUMS.minisig
+```
+
+Only after that, check each file against `SHA256SUMS`.
 
 ---
 

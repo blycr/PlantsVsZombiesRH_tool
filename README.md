@@ -61,6 +61,43 @@
 * **纯内存修改**：只改内存，不动存档和本地文件，退出后游戏恢复正常。
 * **版本绑定**：所有内存特征码和偏移量只适配《植物大战僵尸融合版 3.8.1》，其他版本不保证可用。
 * **建议进关后再开**：附加进程在主菜单也可能成功，但多数效果要在关卡内才会体现。
+* **只信官方 Release**：请只从本仓库的 [GitHub Releases](https://github.com/blycr/PlantsVsZombiesRH_tool/releases) 下载；付费渠道、网盘二次打包一律不认。
+
+---
+
+## 校验下载文件（防篡改）
+
+每个正式 Release 会附带 `SHA256SUMS`。下载后请对照哈希，确认文件未被替换或损坏。
+
+### 方法 1：PowerShell（推荐）
+
+在放有发布文件和 `SHA256SUMS` 的目录执行：
+
+```powershell
+Get-Content .\SHA256SUMS
+Get-FileHash .\pvz_fusion_cheats_wpf.exe -Algorithm SHA256
+Get-FileHash .\pvz_fusion_cheats_cs.exe -Algorithm SHA256
+Get-FileHash .\pvz_fusion_cheats.ct -Algorithm SHA256
+Get-FileHash .\pvz_fusion_cheats_v9.py -Algorithm SHA256
+```
+
+哈希（忽略大小写）必须与 `SHA256SUMS` 中对应文件名一致。
+
+若你克隆了本仓库，也可用脚本批量校验：
+
+```powershell
+pwsh .\scripts\verify-release.ps1 -Dir 你的下载目录
+```
+
+### 方法 2：可选 minisign 签名
+
+若该版本还提供了 `SHA256SUMS.minisig` 与仓库中的 `minisign.pub`，可进一步验证校验清单本身是否由作者签发（需安装 [minisign](https://jedisct1.github.io/minisign/)）：
+
+```powershell
+minisign -V -p minisign.pub -m SHA256SUMS -x SHA256SUMS.minisig
+```
+
+通过后再按 `SHA256SUMS` 核对各个文件。
 
 ---
 
