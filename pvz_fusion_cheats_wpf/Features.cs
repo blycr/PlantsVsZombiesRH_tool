@@ -129,10 +129,10 @@ namespace pvz_fusion_cheats_wpf
             if (Enabled) return true;
 
             long baseLong = baseAddress.ToInt64();
-            _cardCdAddr = (IntPtr)(baseLong + 0x81E050);
-            _toolCdAddr = (IntPtr)(baseLong + 0x6539D0);
+            _cardCdAddr = (IntPtr)(baseLong + 0x8548B0);
+            _toolCdAddr = (IntPtr)(baseLong + 0x666B20);
 
-            byte[] origCard = { 0x40, 0x53, 0x48, 0x83, 0xEC, 0x40 };
+            byte[] origCard = { 0x40, 0x53, 0x48, 0x83, 0xEC, 0x30 };
             byte[] origTool = { 0x40, 0x53, 0x48, 0x83, 0xEC, 0x40 };
 
             try
@@ -169,7 +169,7 @@ namespace pvz_fusion_cheats_wpf
                 // mov [rcx+0x44], eax (89 41 44)
                 cardCode.AddRange(new byte[] { 0x89, 0x41, 0x44 });
                 // push rbx; sub rsp, 40h (40 53 48 83 EC 40)
-                cardCode.AddRange(new byte[] { 0x40, 0x53, 0x48, 0x83, 0xEC, 0x40 });
+                cardCode.AddRange(new byte[] { 0x40, 0x53, 0x48, 0x83, 0xEC, 0x30 });
                 // jmp back
                 IntPtr backCard = (IntPtr)((long)_cardCdAddr + 6);
                 cardCode.AddRange(MakeJmp((IntPtr)((long)_cardCave + cardCode.Count), backCard));
@@ -249,14 +249,14 @@ namespace pvz_fusion_cheats_wpf
             if (_getSunAddr == IntPtr.Zero)
             {
                 byte[] getsunPattern = { 0x01, 0x86, 0x08, 0x01, 0x00, 0x00 };
-                _getSunAddr = pm.FindPattern(getsunPattern, 0x854000, 0x856000);
+                _getSunAddr = pm.FindPattern(getsunPattern, 0x88C000, 0x88D000);
                 if (_getSunAddr == IntPtr.Zero) return false;
             }
 
             if (_useSunAddr == IntPtr.Zero)
             {
                 byte[] usesunPattern = { 0x29, 0x83, 0x08, 0x01, 0x00, 0x00 };
-                _useSunAddr = pm.FindPattern(usesunPattern, 0x861000, 0x863000);
+                _useSunAddr = pm.FindPattern(usesunPattern, 0x89A000, 0x89B000);
                 if (_useSunAddr == IntPtr.Zero) return false;
             }
 
@@ -362,9 +362,9 @@ namespace pvz_fusion_cheats_wpf
         {
             if (Enabled) return true;
 
-            _chkboxAddr = (IntPtr)((long)baseAddress + 0x823DD0);
-            _skipAddr = (IntPtr)((long)baseAddress + 0x82D56B);
-            _failAddr = (IntPtr)((long)baseAddress + 0x82D5AD);
+            _chkboxAddr = (IntPtr)((long)baseAddress + 0x85A4F0);
+            _skipAddr = (IntPtr)((long)baseAddress + 0x863A5C);
+            _failAddr = (IntPtr)((long)baseAddress + 0x863A9D);
 
             try
             {
@@ -373,8 +373,8 @@ namespace pvz_fusion_cheats_wpf
                 byte[] v3 = pm.ReadBytes(_failAddr, 6);
 
                 byte[] orig1 = { 0x48, 0x8B, 0xC4 };
-                byte[] orig2 = { 0x0F, 0x85, 0xE1, 0x00, 0x00, 0x00 };
-                byte[] orig3 = { 0x0F, 0x84, 0xB7, 0xFD, 0xFF, 0xFF };
+                byte[] orig2 = { 0x0F, 0x85, 0xE0, 0x00, 0x00, 0x00 };
+                byte[] orig3 = { 0x0F, 0x84, 0x26, 0xFF, 0xFF, 0xFF };
 
                 for (int i = 0; i < 3; i++)
                 {
@@ -396,8 +396,8 @@ namespace pvz_fusion_cheats_wpf
             byte[] patch3 = { 0x0F, 0x84, 0x9F, 0x00, 0x00, 0x00 };
 
             byte[] orig1V = { 0x48, 0x8B, 0xC4 };
-            byte[] orig2V = { 0x0F, 0x85, 0xE1, 0x00, 0x00, 0x00 };
-            byte[] orig3V = { 0x0F, 0x84, 0xB7, 0xFD, 0xFF, 0xFF };
+            byte[] orig2V = { 0x0F, 0x85, 0xE0, 0x00, 0x00, 0x00 };
+            byte[] orig3V = { 0x0F, 0x84, 0x26, 0xFF, 0xFF, 0xFF };
 
             Patches.Add(new PatchRecord(_chkboxAddr, orig1V, patch1));
             Patches.Add(new PatchRecord(_skipAddr, orig2V, patch2));
@@ -431,8 +431,8 @@ namespace pvz_fusion_cheats_wpf
         {
             if (Enabled) return true;
 
-            _takedamageAddr = (IntPtr)((long)baseAddress + 0x3F65A0);
-            _dieAddr = (IntPtr)((long)baseAddress + 0x3EFC10);
+            _takedamageAddr = (IntPtr)((long)baseAddress + 0x3F51D0);
+            _dieAddr = (IntPtr)((long)baseAddress + 0x3EE9C0);
 
             try
             {
@@ -513,7 +513,9 @@ namespace pvz_fusion_cheats_wpf
     public class OneHitKillFeature : CheatFeature
     {
         private IntPtr _targetAddr = IntPtr.Zero;
+        private IntPtr _applyAddr = IntPtr.Zero;
         private IntPtr _caveAddr = IntPtr.Zero;
+        private IntPtr _applyCave = IntPtr.Zero;
 
         public OneHitKillFeature() : base(
             "5",
@@ -525,17 +527,20 @@ namespace pvz_fusion_cheats_wpf
         {
             if (Enabled) return true;
 
-            _targetAddr = (IntPtr)((long)baseAddress + 0x58B850);
+            // TakeDamage prologue is 10 bytes; ApplyDamage prologue is 9 bytes
+            _targetAddr = (IntPtr)((long)baseAddress + 0x5A0BD0);
+            _applyAddr = (IntPtr)((long)baseAddress + 0x592900);
+            byte[] origBytes = { 0x40, 0x56, 0x41, 0x56, 0x41, 0x57, 0x48, 0x83, 0xEC, 0x60 };
+            byte[] origApply = { 0x40, 0x53, 0x57, 0x41, 0x56, 0x48, 0x83, 0xEC, 0x30 };
 
             try
             {
-                byte[] verify = pm.ReadBytes(_targetAddr, 12);
-                byte[] origBytes = { 0x40, 0x56, 0x41, 0x54, 0x41, 0x56, 0x41, 0x57, 0x48, 0x83, 0xEC, 0x68 };
-
-                for (int i = 0; i < 12; i++)
-                {
+                byte[] verify = pm.ReadBytes(_targetAddr, 10);
+                byte[] verifyApply = pm.ReadBytes(_applyAddr, 9);
+                for (int i = 0; i < 10; i++)
                     if (verify[i] != origBytes[i]) return false;
-                }
+                for (int i = 0; i < 9; i++)
+                    if (verifyApply[i] != origApply[i]) return false;
             }
             catch
             {
@@ -546,7 +551,7 @@ namespace pvz_fusion_cheats_wpf
             {
                 try
                 {
-                    _caveAddr = pm.GetCave(32, _targetAddr);
+                    _caveAddr = pm.GetCave(48, _targetAddr);
                     Caves.Add(_caveAddr);
                 }
                 catch
@@ -554,29 +559,47 @@ namespace pvz_fusion_cheats_wpf
                     return false;
                 }
 
-                byte[] caveCode = new byte[22];
+                byte[] caveCode = new byte[20];
                 byte[] movEdx = { 0xBA, 0x40, 0x42, 0x0F, 0x00 };
-                byte[] origBytes = { 0x40, 0x56, 0x41, 0x54, 0x41, 0x56, 0x41, 0x57, 0x48, 0x83, 0xEC, 0x68 };
-                
                 Array.Copy(movEdx, 0, caveCode, 0, 5);
-                Array.Copy(origBytes, 0, caveCode, 5, 12);
-
-                IntPtr jmpBackDest = (IntPtr)((long)_targetAddr + 12);
-                byte[] jmpCode = MakeJmp((IntPtr)((long)_caveAddr + 17), jmpBackDest);
-                Array.Copy(jmpCode, 0, caveCode, 17, 5);
-
+                Array.Copy(origBytes, 0, caveCode, 5, 10);
+                Array.Copy(MakeJmp((IntPtr)((long)_caveAddr + 15), (IntPtr)((long)_targetAddr + 10)), 0, caveCode, 15, 5);
                 pm.WriteBytes(_caveAddr, caveCode);
             }
 
-            byte[] patchBytes = new byte[12];
-            byte[] jmpToCave = MakeJmp(_targetAddr, _caveAddr);
-            Array.Copy(jmpToCave, 0, patchBytes, 0, 5);
-            for (int i = 5; i < 12; i++) patchBytes[i] = 0x90;
+            if (_applyCave == IntPtr.Zero)
+            {
+                try
+                {
+                    _applyCave = pm.GetCave(32, _applyAddr);
+                    Caves.Add(_applyCave);
+                }
+                catch
+                {
+                    return false;
+                }
 
-            byte[] origVerify = { 0x40, 0x56, 0x41, 0x54, 0x41, 0x56, 0x41, 0x57, 0x48, 0x83, 0xEC, 0x68 };
-            Patches.Add(new PatchRecord(_targetAddr, origVerify, patchBytes));
+                byte[] applyCode = new byte[20];
+                byte[] movR8d = { 0x41, 0xB8, 0x40, 0x42, 0x0F, 0x00 };
+                Array.Copy(movR8d, 0, applyCode, 0, 6);
+                Array.Copy(origApply, 0, applyCode, 6, 9);
+                Array.Copy(MakeJmp((IntPtr)((long)_applyCave + 15), (IntPtr)((long)_applyAddr + 9)), 0, applyCode, 15, 5);
+                pm.WriteBytes(_applyCave, applyCode);
+            }
 
-            pm.WriteBytes(_targetAddr, patchBytes);
+            byte[] patchTd = new byte[10];
+            Array.Copy(MakeJmp(_targetAddr, _caveAddr), 0, patchTd, 0, 5);
+            for (int i = 5; i < 10; i++) patchTd[i] = 0x90;
+
+            byte[] patchAp = new byte[9];
+            Array.Copy(MakeJmp(_applyAddr, _applyCave), 0, patchAp, 0, 5);
+            for (int i = 5; i < 9; i++) patchAp[i] = 0x90;
+
+            Patches.Add(new PatchRecord(_targetAddr, origBytes, patchTd));
+            Patches.Add(new PatchRecord(_applyAddr, origApply, patchAp));
+
+            pm.WriteBytes(_targetAddr, patchTd);
+            pm.WriteBytes(_applyAddr, patchAp);
             Enabled = true;
             return true;
         }
@@ -603,15 +626,15 @@ namespace pvz_fusion_cheats_wpf
         {
             if (Enabled) return true;
 
-            _chewHookAddr = (IntPtr)((long)baseAddress + 0x3F4198);
-            _riseHookAddr = (IntPtr)((long)baseAddress + 0x4134F0);
+            _chewHookAddr = (IntPtr)((long)baseAddress + 0x3F2E88);
+            _riseHookAddr = (IntPtr)((long)baseAddress + 0x412580);
 
             try
             {
                 byte[] v1 = pm.ReadBytes(_chewHookAddr, 8);
                 byte[] v2 = pm.ReadBytes(_riseHookAddr, 9);
 
-                byte[] origChew = { 0xF3, 0x0F, 0x10, 0xB7, 0x44, 0x01, 0x00, 0x00 };
+                byte[] origChew = { 0xF3, 0x0F, 0x10, 0xB7, 0x4C, 0x01, 0x00, 0x00 };
                 byte[] origRise = { 0x40, 0x53, 0x48, 0x81, 0xEC, 0x90, 0x00, 0x00, 0x00 };
 
                 for (int i = 0; i < 8; i++)
@@ -645,7 +668,7 @@ namespace pvz_fusion_cheats_wpf
                 _riseCaveAddr = (IntPtr)((long)_caveAddr + 128);
 
                 // Build chew cave with optimized 88-byte hex code (speeds up Chomper chew and all base/fused Potato Mines arming)
-                string chewHex = "508B878001000083F817743083F81D742B83F81E742685C075148B878401000083F80474173DC80000007D10EB00F30F10B74401000058E900000000F30F10B744010000F30F59350800000058E90000000090900000A041";
+                string chewHex = "508B878801000083F817743083F81D742B83F81E742685C075148B878C01000083F80474173DC80000007D10EB00F30F10B74C01000058E900000000F30F10B74C010000F30F59350800000058E90000000090900000A041";
                 byte[] chewCode = new byte[chewHex.Length / 2];
                 for (int i = 0; i < chewCode.Length; i++)
                 {
@@ -687,7 +710,7 @@ namespace pvz_fusion_cheats_wpf
             Array.Copy(jmpRiseHook, 0, patchRise, 0, 5);
             for (int i = 5; i < 9; i++) patchRise[i] = 0x90;
 
-            byte[] origChewVerify = { 0xF3, 0x0F, 0x10, 0xB7, 0x44, 0x01, 0x00, 0x00 };
+            byte[] origChewVerify = { 0xF3, 0x0F, 0x10, 0xB7, 0x4C, 0x01, 0x00, 0x00 };
             byte[] origRiseVerify = { 0x40, 0x53, 0x48, 0x81, 0xEC, 0x90, 0x00, 0x00, 0x00 };
 
             Patches.Add(new PatchRecord(_chewHookAddr, origChewVerify, patchChew));
@@ -703,36 +726,129 @@ namespace pvz_fusion_cheats_wpf
 
     // ============================================================================
     // 功能 7：自由调节游戏整体速率
+    // 通过 Board.Update 持续重写 timeScale，过关后被游戏重置也会自动拉回
     // ============================================================================
     public class SpeedFeature : CheatFeature
     {
         public double Speed { get; private set; } = 1.0;
+        private IntPtr _boardUpdateAddr = IntPtr.Zero;
+        private IntPtr _caveAddr = IntPtr.Zero;
+        private IntPtr _speedFloatAddr = IntPtr.Zero;
 
         public SpeedFeature() : base(
             "7",
             "游戏速率调节", "Game Speed Controller",
-            "调节游戏整体运行速率（支持加速/减速，默认 1.0x）", "Adjust global game speed from 0.1x to 10.0x (default 1.0x)"
+            "调节游戏整体运行速率（支持加速/减速，过关后保持）", "Adjust global game speed from 0.1x to 10.0x (persists across levels)"
         ) { }
 
         public override bool Enable(NativeMemory pm, IntPtr baseAddress)
         {
-            return SetSpeed(pm, baseAddress, Speed);
+            return SetSpeed(pm, baseAddress, Speed != 1.0 ? Speed : 2.0);
         }
 
         public override bool Disable(NativeMemory pm, IntPtr baseAddress)
         {
-            if (SetSpeed(pm, baseAddress, 1.0))
-            {
-                Speed = 1.0;
-                Enabled = false;
-                return true;
-            }
-            return false;
+            base.Disable(pm, baseAddress);
+            Speed = 1.0;
+            Enabled = false;
+            OneShotSetTimeScale(pm, baseAddress, 1.0);
+            return true;
         }
 
         public bool SetSpeed(NativeMemory pm, IntPtr baseAddress, double speed)
         {
-            IntPtr setTimeScaleAddr = (IntPtr)((long)baseAddress + 0x1E2FBB0);
+            // 设为 1.0 时卸 hook 并立刻还原
+            if (Math.Abs(speed - 1.0) < 1e-6 && Patches.Count > 0)
+            {
+                return Disable(pm, baseAddress);
+            }
+
+            _boardUpdateAddr = (IntPtr)((long)baseAddress + 0x899A20);
+            IntPtr setTs = (IntPtr)((long)baseAddress + 0x1E7C290);
+            byte[] orig = { 0x40, 0x53, 0x48, 0x83, 0xEC, 0x40 };
+
+            try
+            {
+                if (Patches.Count == 0)
+                {
+                    byte[] verify = pm.ReadBytes(_boardUpdateAddr, 6);
+                    for (int i = 0; i < 6; i++)
+                        if (verify[i] != orig[i]) return false;
+                }
+            }
+            catch
+            {
+                return false;
+            }
+
+            if (_caveAddr == IntPtr.Zero)
+            {
+                try
+                {
+                    _caveAddr = pm.GetCave(128, _boardUpdateAddr);
+                    Caves.Add(_caveAddr);
+                }
+                catch
+                {
+                    return false;
+                }
+
+                List<byte> code = new List<byte>();
+                code.AddRange(new byte[] { 0x51 });
+                code.AddRange(new byte[] { 0x52 });
+                code.AddRange(new byte[] { 0x41, 0x50 });
+                code.AddRange(new byte[] { 0x41, 0x51 });
+                code.AddRange(new byte[] { 0x41, 0x52 });
+                code.AddRange(new byte[] { 0x41, 0x53 });
+                code.AddRange(new byte[] { 0x48, 0x83, 0xEC, 0x28 });
+                int movssOff = code.Count;
+                code.AddRange(new byte[] { 0xF3, 0x0F, 0x10, 0x05, 0x00, 0x00, 0x00, 0x00 });
+                code.AddRange(new byte[] { 0x48, 0xB8 });
+                code.AddRange(BitConverter.GetBytes(setTs.ToInt64()));
+                code.AddRange(new byte[] { 0xFF, 0xD0 });
+                code.AddRange(new byte[] { 0x48, 0x83, 0xC4, 0x28 });
+                code.AddRange(new byte[] { 0x41, 0x5B });
+                code.AddRange(new byte[] { 0x41, 0x5A });
+                code.AddRange(new byte[] { 0x41, 0x59 });
+                code.AddRange(new byte[] { 0x41, 0x58 });
+                code.AddRange(new byte[] { 0x5A });
+                code.AddRange(new byte[] { 0x59 });
+                code.AddRange(orig);
+                code.AddRange(MakeJmp((IntPtr)((long)_caveAddr + code.Count), (IntPtr)((long)_boardUpdateAddr + 6)));
+
+                while (code.Count % 4 != 0) code.Add(0x90);
+                int floatOff = code.Count;
+                code.AddRange(BitConverter.GetBytes((float)speed));
+
+                int disp = floatOff - (movssOff + 8);
+                byte[] dispBytes = BitConverter.GetBytes(disp);
+                for (int i = 0; i < 4; i++) code[movssOff + 4 + i] = dispBytes[i];
+
+                _speedFloatAddr = (IntPtr)((long)_caveAddr + floatOff);
+                pm.WriteBytes(_caveAddr, code.ToArray());
+            }
+            else if (_speedFloatAddr != IntPtr.Zero)
+            {
+                pm.WriteBytes(_speedFloatAddr, BitConverter.GetBytes((float)speed));
+            }
+
+            if (Patches.Count == 0)
+            {
+                byte[] patch = new byte[6];
+                Array.Copy(MakeJmp(_boardUpdateAddr, _caveAddr), 0, patch, 0, 5);
+                patch[5] = 0x90;
+                Patches.Add(new PatchRecord(_boardUpdateAddr, orig, patch));
+                pm.WriteBytes(_boardUpdateAddr, patch);
+            }
+
+            Speed = speed;
+            Enabled = (speed != 1.0);
+            return true;
+        }
+
+        private static bool OneShotSetTimeScale(NativeMemory pm, IntPtr baseAddress, double speed)
+        {
+            IntPtr setTimeScaleAddr = (IntPtr)((long)baseAddress + 0x1E7C290);
             try
             {
                 IntPtr cave = pm.Allocate(64);
@@ -746,16 +862,9 @@ namespace pvz_fusion_cheats_wpf
                 };
                 Array.Copy(header, 0, shellcode, 0, header.Length);
                 Array.Copy(BitConverter.GetBytes(setTimeScaleAddr.ToInt64()), 0, shellcode, 14, 8);
-                
-                byte[] tail = {
-                    0xFF, 0xD0,
-                    0x48, 0x83, 0xC4, 0x28,
-                    0xC3,
-                    0x90, 0x90, 0x90
-                };
+                byte[] tail = { 0xFF, 0xD0, 0x48, 0x83, 0xC4, 0x28, 0xC3, 0x90, 0x90, 0x90 };
                 Array.Copy(tail, 0, shellcode, 22, tail.Length);
                 Array.Copy(BitConverter.GetBytes((float)speed), 0, shellcode, 32, 4);
-
                 pm.WriteBytes(cave, shellcode);
 
                 if (pm.StartThread(cave, out IntPtr threadHandle))
@@ -763,10 +872,7 @@ namespace pvz_fusion_cheats_wpf
                     NativeMemory.WaitForSingleObject(threadHandle, 500);
                     NativeMemory.CloseHandle(threadHandle);
                 }
-
                 pm.Free(cave);
-                Speed = speed;
-                Enabled = (speed != 1.0);
                 return true;
             }
             catch

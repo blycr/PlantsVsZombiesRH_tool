@@ -1,4 +1,4 @@
-# Plants vs. Zombies Fusion Edition 3.7 Trainer & Helper Tool
+# Plants vs. Zombies Fusion Edition 3.8.1 Trainer & Helper Tool
 
 [English](./README_EN.md) | [简体中文](./README.md)
 
@@ -34,11 +34,11 @@ Pick one. No extra setup needed.
 
 ### Method D: Python Source Execution (Developer Mode)
 * **For**: Developers who want to modify logic or see the full implementation.
-* **Source**: [pvz_fusion_cheats_v8.py](./pvz_fusion_cheats_v8.py) in the project.
+* **Source**: [pvz_fusion_cheats_v9.py](./pvz_fusion_cheats_v9.py) in the project.
 * **Steps**:
   1. Install uv package manager (PowerShell): `powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"`
   2. Install Python 3.12: `uv python install 3.12`
-  3. Enter a level, then run from the project root: `.venv\Scripts\python pvz_fusion_cheats_v8.py`
+  3. Enter a level, then run from the project root: `.venv\Scripts\python pvz_fusion_cheats_v9.py`
 
 ---
 
@@ -51,15 +51,16 @@ Pick one. No extra setup needed.
 | 3 | Free Planting & Overlap | Removes terrain restrictions (plant on water/roof directly). Compatible plants still fuse automatically. |
 | 4 | Invincible Plants | Immune to chewing and environmental instant kills. Shovel and explosive self-destruction still work. |
 | 5 | One-Hit Kill Zombies | Zombies die immediately upon taking any damage. |
-| 6 | Specific Plant Speedup | Chomper chewing and all Potato Mines (including base and fusion variants) arm instantly upon planting. |
-| 7 | Game Speed Controller | Smooth adjustment from 0.1x to 10.0x. |
+| 6 | Specific Plant Speedup | Chomper chewing and all Potato Mines (including base and fusion variants) arm much faster. |
+| 7 | Game Speed Controller | Smooth adjustment from 0.1x to 10.0x. The chosen speed persists across levels. |
 
 ---
 
 ## Notes
 
 * **Pure Memory Trainer**: Only touches game memory. Does not modify save files or local data. Game returns to normal once the trainer exits.
-* **Version Locked**: All memory offsets and signatures are tailored for "Plants vs. Zombies Fusion Edition 3.7". Other versions may not work.
+* **Version Locked**: All memory offsets and signatures are tailored for "Plants vs. Zombies Fusion Edition 3.8.1". Other versions may not work.
+* **Best used in a level**: Attaching may succeed on the main menu, but most effects only show up after a level starts.
 
 ---
 

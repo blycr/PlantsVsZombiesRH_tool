@@ -52,11 +52,11 @@ namespace pvz_fusion_cheats_wpf
         public void UpdateLanguageUI()
         {
             // Update Window Title
-            this.Title = T("PVZ Fusion 修改器 v7", "PVZ Fusion Trainer v7");
+            this.Title = T("PVZ Fusion 修改器 v9", "PVZ Fusion Trainer v9");
 
             // Header Texts
-            Text_Title.Text = T("PVZ Fusion 3.6.1 修改器", "PVZ Fusion 3.6.1 Trainer");
-            Text_SubTitle.Text = T("v7 GUI", "v7 GUI");
+            Text_Title.Text = T("PVZ Fusion 3.8.1 修改器", "PVZ Fusion 3.8.1 Trainer");
+            Text_SubTitle.Text = T("v9 GUI", "v9 GUI");
 
             // Language switch button content
             Btn_Language.Content = IsEnglish ? "中" : "EN";
