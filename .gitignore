@@ -260,3 +260,7 @@ pvz_fusion_cheats_wpf.exe
 # Local-only maintainer notes (not for public repo)
 /docs-local/
 
+
+# Maintainer scripts (local only)
+/scripts/
+

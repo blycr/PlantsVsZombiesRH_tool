@@ -1,112 +1,73 @@
-# 植物大战僵尸融合版 3.8.1 修改器与辅助工具
+# 植物大战僵尸融合版 3.8.1 修改器
 
 [English](./README_EN.md) | [简体中文](./README.md)
 
 7 个功能：极速冷却、阳光越花越多、任意种植与重叠、植物无敌、僵尸一击必杀、特定植物加速、游戏速率调节。
 
-## 下载最新版
+## 下载
 
-去 [GitHub Releases](https://github.com/blycr/PlantsVsZombiesRH_tool/releases) 下载可运行文件与 `SHA256SUMS` 校验清单。
+请只从本仓库 [GitHub Releases](https://github.com/blycr/PlantsVsZombiesRH_tool/releases) 下载。付费渠道或网盘二次打包均不可信。
 
-本仓库主要提供：**使用说明**、**当前核心源码**、**校验脚本**。编译好的 `.exe` 只通过 Release 分发，不放在 git 历史里。
+Release 中通常包含：
 
----
-
-## 运行方式
-
-选一种就行，不用额外配置。
-
-### 方式 A（推荐）：图形界面修改器 (WPF GUI)
-* **适合**：普通玩家，喜欢鼠标操作和滑块调速度。
-* **下载**：Release 页面的 `pvz_fusion_cheats_wpf.exe`。
-* **环境**：需要 .NET 10 运行库。
-* **用法**：进关卡后运行，勾选开关或拖滑块。自动附加游戏进程，不用提权。
-* **源码**：仓库内 `pvz_fusion_cheats_wpf/`。
-
-### 方式 B：控制台快捷修改器 (C# Console)
-* **适合**：喜欢用命令行但不想装 Python 的玩家。
-* **下载**：Release 页面的 `pvz_fusion_cheats_cs.exe`。
-* **环境**：需要 .NET 10 运行库。
-* **用法**：进关卡后运行，按菜单提示输数字开关功能。
-* **源码**：仓库内 `pvz_fusion_cheats_cs/`。
-
-### 方式 C：Cheat Engine 辅助修改 (CE Table)
-* **适合**：熟悉 Cheat Engine 的玩家。
-* **下载**：Release 页面的 `pvz_fusion_cheats.ct`（仓库中亦有同名源文件）。
-* **环境**：需安装 [Cheat Engine](https://www.cheatengine.org/)。
-* **用法**：进关卡后双击 `.ct` 文件，在 CE 里附加 `PlantsVsZombiesRH.exe`，勾选功能激活。
-
-### 方式 D：Python 源码运行（开发者模式）
-* **适合**：开发者，想改逻辑或看完整实现。
-* **源文件**：仓库内 [pvz_fusion_cheats_v9.py](./pvz_fusion_cheats_v9.py)（Release 也会附带）。
-* **步骤**：
-  1. 装 uv 包管理器（PowerShell）：`powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"`
-  2. 装 Python 3.12：`uv python install 3.12`
-  3. 进关卡后，在项目目录执行：`.venv\Scripts\python pvz_fusion_cheats_v9.py`
+* `pvz_fusion_cheats_wpf.exe` — 图形界面（需 .NET 10）
+* `pvz_fusion_cheats_cs.exe` — 控制台（需 .NET 10）
+* `pvz_fusion_cheats.ct` — Cheat Engine 表
+* `pvz_fusion_cheats_v9.py` — Python 源码
+* `SHA256SUMS` — 文件校验清单（可选对照）
 
 ---
 
-## 功能说明
+## 用法
 
-| 快捷键 | 功能 | 效果 |
+进关卡后再运行修改器效果最完整。
+
+### A. 图形界面（推荐）
+
+1. 安装 [.NET 10 运行库](https://dotnet.microsoft.com/download)（若尚未安装）。
+2. 运行 `pvz_fusion_cheats_wpf.exe`。
+3. 用开关打开/关闭功能，用滑块调节游戏速度。
+
+### B. 控制台
+
+1. 安装 .NET 10 运行库。
+2. 运行 `pvz_fusion_cheats_cs.exe`。
+3. 按菜单提示输入数字开关功能。
+
+### C. Cheat Engine
+
+1. 安装 [Cheat Engine](https://www.cheatengine.org/)。
+2. 打开 `pvz_fusion_cheats.ct`，附加进程 `PlantsVsZombiesRH.exe`。
+3. 勾选需要的功能。
+
+### D. Python 源码
+
+1. 安装 Python 3.12（可用 [uv](https://github.com/astral-sh/uv)）。
+2. 进关卡后，在含有脚本的目录执行：
+
+```text
+python pvz_fusion_cheats_v9.py
+```
+
+---
+
+## 功能一览
+
+| 键 | 功能 | 说明 |
 | :---: | :--- | :--- |
-| 1 | 极速冷却 | 卡牌、手套、锤子 CD 瞬间冷却完毕，可无限连种。 |
-| 2 | 阳光越花越多 | 消耗或拾取阳光时，数值以 100 倍增加。 |
-| 3 | 任意种植与重叠 | 解除地形限制（水上、屋顶直接种），兼容植物自动融合。 |
-| 4 | 植物无敌 | 免疫啃食和环境秒杀（不影响铲除和爆炸植物自毁）。 |
-| 5 | 僵尸一击必杀 | 僵尸受到任何伤害立即死亡。 |
-| 6 | 特定植物加速 | 大嘴花咀嚼与所有地雷系列（含基础与全部融合分支）准备时间大幅缩短。 |
-| 7 | 整体速率调节 | 0.1x 到 10.0x 无级调速；过关后仍保持设定倍率。 |
+| 1 | 极速冷却 | 卡牌、手套、锤子 CD 瞬间完成 |
+| 2 | 阳光越花越多 | 拾取或消耗阳光时按 100 倍增加 |
+| 3 | 任意种植与重叠 | 解除地形限制，兼容植物可融合 |
+| 4 | 植物无敌 | 免疫啃食与环境秒杀；铲除、自爆仍有效 |
+| 5 | 僵尸一击必杀 | 僵尸受到任意伤害即死 |
+| 6 | 特定植物加速 | 大嘴花咀嚼、地雷系列准备大幅加快 |
+| 7 | 游戏速率 | 0.1x–10.0x；过关后仍保持 |
 
 ---
 
-## 注意事项
+## 注意
 
-* **纯内存修改**：只改内存，不动存档和本地文件，退出后游戏恢复正常。
-* **版本绑定**：所有内存特征码和偏移量只适配《植物大战僵尸融合版 3.8.1》，其他版本不保证可用。
-* **建议进关后再开**：附加进程在主菜单也可能成功，但多数效果要在关卡内才会体现。
-* **只信官方 Release**：请只从本仓库的 [GitHub Releases](https://github.com/blycr/PlantsVsZombiesRH_tool/releases) 下载；付费渠道、网盘二次打包一律不认。
-
----
-
-## 校验下载文件（防篡改）
-
-每个正式 Release 会附带 `SHA256SUMS`。下载后请对照哈希，确认文件未被替换或损坏。
-
-### 方法 1：PowerShell（推荐）
-
-在放有发布文件和 `SHA256SUMS` 的目录执行：
-
-```powershell
-Get-Content .\SHA256SUMS
-Get-FileHash .\pvz_fusion_cheats_wpf.exe -Algorithm SHA256
-Get-FileHash .\pvz_fusion_cheats_cs.exe -Algorithm SHA256
-Get-FileHash .\pvz_fusion_cheats.ct -Algorithm SHA256
-Get-FileHash .\pvz_fusion_cheats_v9.py -Algorithm SHA256
-```
-
-哈希（忽略大小写）必须与 `SHA256SUMS` 中对应文件名一致。
-
-若你克隆了本仓库，也可用脚本批量校验：
-
-```powershell
-pwsh .\scripts\verify-release.ps1 -Dir 你的下载目录
-```
-
-### 方法 2：可选 minisign 签名
-
-若该版本还提供了 `SHA256SUMS.minisig` 与仓库中的 `minisign.pub`，可进一步验证校验清单本身是否由作者签发（需安装 [minisign](https://jedisct1.github.io/minisign/)）：
-
-```powershell
-minisign -V -p minisign.pub -m SHA256SUMS -x SHA256SUMS.minisig
-```
-
-通过后再按 `SHA256SUMS` 核对各个文件。
-
----
-
-## 开源协议与免责声明
-
-* **完全免费**：本修改器（包括所有编译生成的 `.exe` 文件、`.ct` 脚本、Python 源码）**完全免费**。如果您是通过付费渠道购买的，说明您已被骗，请立即申请退款。
-* **非商业使用**：本项目采用自定义**非商业用途、教育学习与防骗禁售许可证**，严禁将本软件或任何衍生作品用于商业买卖、收费服务或有偿打包。
-* **免责声明**：本工具仅供单机娱乐和技术学习交流，使用本工具产生的一切后果（包括但不限于游戏崩溃、数据丢失、封号等）由使用者自行承担，作者不承担任何责任。
+* 只改内存，不改存档；退出修改器后游戏恢复正常。
+* 仅适配《植物大战僵尸融合版 3.8.1》。
+* 本工具完全免费；若付费获得，说明被骗。
+* 仅供单机娱乐与学习，使用风险自负。
