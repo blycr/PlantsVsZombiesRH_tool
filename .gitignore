@@ -256,3 +256,7 @@ pvz_fusion_cheats_wpf.exe
 # Generated release checksums (publish on GitHub Release only)
 /SHA256SUMS
 /SHA256SUMS.minisig
+
+# Local-only maintainer notes (not for public repo)
+/docs-local/
+

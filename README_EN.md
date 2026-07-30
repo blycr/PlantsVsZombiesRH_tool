@@ -6,7 +6,9 @@
 
 ## Download Latest Version
 
-Get it from the [GitHub Releases page](https://github.com/blycr/PlantsVsZombiesRH_tool/releases).
+Get binaries and `SHA256SUMS` from the [GitHub Releases page](https://github.com/blycr/PlantsVsZombiesRH_tool/releases).
+
+This repository mainly ships: **usage docs**, **current source code**, and **checksum scripts**. Built `.exe` files are distributed via Releases only, not stored in git history.
 
 ---
 
@@ -16,25 +18,27 @@ Pick one. No extra setup needed.
 
 ### Method A (Recommended): GUI Trainer (WPF GUI)
 * **For**: Regular players who prefer mouse controls and a speed slider.
-* **Download**: Grab [pvz_fusion_cheats_wpf.exe](./pvz_fusion_cheats_wpf.exe) from the Release page.
+* **Download**: `pvz_fusion_cheats_wpf.exe` from the Release page.
 * **Requires**: .NET 10 Runtime.
 * **Usage**: Run after entering a level. Check/uncheck features or drag the speed slider. Auto-attaches to the game process, no elevation needed.
+* **Source**: `pvz_fusion_cheats_wpf/` in this repo.
 
 ### Method B: Console Trainer (C# Console)
 * **For**: Players who like the command line but don't want to install Python.
-* **Download**: Grab [pvz_fusion_cheats_cs.exe](./pvz_fusion_cheats_cs.exe) from the Release page.
+* **Download**: `pvz_fusion_cheats_cs.exe` from the Release page.
 * **Requires**: .NET 10 Runtime.
 * **Usage**: Run after entering a level. Press the number keys shown in the menu to toggle features.
+* **Source**: `pvz_fusion_cheats_cs/` in this repo.
 
 ### Method C: Cheat Engine Cheat Table (CE Table)
 * **For**: Players familiar with Cheat Engine.
-* **Download**: Grab [pvz_fusion_cheats.ct](./pvz_fusion_cheats.ct) from the Release page.
+* **Download**: `pvz_fusion_cheats.ct` from the Release page (same file is also in the repo).
 * **Requires**: [Cheat Engine](https://www.cheatengine.org/) installed.
 * **Usage**: After entering a level, double-click the `.ct` file, attach to `PlantsVsZombiesRH.exe` in CE, and check the features to activate them.
 
 ### Method D: Python Source Execution (Developer Mode)
 * **For**: Developers who want to modify logic or see the full implementation.
-* **Source**: [pvz_fusion_cheats_v9.py](./pvz_fusion_cheats_v9.py) in the project.
+* **Source**: [pvz_fusion_cheats_v9.py](./pvz_fusion_cheats_v9.py) in the repo (also attached on Releases).
 * **Steps**:
   1. Install uv package manager (PowerShell): `powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"`
   2. Install Python 3.12: `uv python install 3.12`

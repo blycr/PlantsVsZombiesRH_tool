@@ -6,7 +6,9 @@
 
 ## 下载最新版
 
-去 [GitHub Releases](https://github.com/blycr/PlantsVsZombiesRH_tool/releases) 下载。
+去 [GitHub Releases](https://github.com/blycr/PlantsVsZombiesRH_tool/releases) 下载可运行文件与 `SHA256SUMS` 校验清单。
+
+本仓库主要提供：**使用说明**、**当前核心源码**、**校验脚本**。编译好的 `.exe` 只通过 Release 分发，不放在 git 历史里。
 
 ---
 
@@ -16,25 +18,27 @@
 
 ### 方式 A（推荐）：图形界面修改器 (WPF GUI)
 * **适合**：普通玩家，喜欢鼠标操作和滑块调速度。
-* **下载**：Release 页面下载 [pvz_fusion_cheats_wpf.exe](./pvz_fusion_cheats_wpf.exe)。
+* **下载**：Release 页面的 `pvz_fusion_cheats_wpf.exe`。
 * **环境**：需要 .NET 10 运行库。
 * **用法**：进关卡后运行，勾选开关或拖滑块。自动附加游戏进程，不用提权。
+* **源码**：仓库内 `pvz_fusion_cheats_wpf/`。
 
 ### 方式 B：控制台快捷修改器 (C# Console)
 * **适合**：喜欢用命令行但不想装 Python 的玩家。
-* **下载**：Release 页面下载 [pvz_fusion_cheats_cs.exe](./pvz_fusion_cheats_cs.exe)。
+* **下载**：Release 页面的 `pvz_fusion_cheats_cs.exe`。
 * **环境**：需要 .NET 10 运行库。
 * **用法**：进关卡后运行，按菜单提示输数字开关功能。
+* **源码**：仓库内 `pvz_fusion_cheats_cs/`。
 
 ### 方式 C：Cheat Engine 辅助修改 (CE Table)
 * **适合**：熟悉 Cheat Engine 的玩家。
-* **下载**：Release 页面下载 [pvz_fusion_cheats.ct](./pvz_fusion_cheats.ct)。
+* **下载**：Release 页面的 `pvz_fusion_cheats.ct`（仓库中亦有同名源文件）。
 * **环境**：需安装 [Cheat Engine](https://www.cheatengine.org/)。
 * **用法**：进关卡后双击 `.ct` 文件，在 CE 里附加 `PlantsVsZombiesRH.exe`，勾选功能激活。
 
 ### 方式 D：Python 源码运行（开发者模式）
 * **适合**：开发者，想改逻辑或看完整实现。
-* **源文件**：项目里的 [pvz_fusion_cheats_v9.py](./pvz_fusion_cheats_v9.py)。
+* **源文件**：仓库内 [pvz_fusion_cheats_v9.py](./pvz_fusion_cheats_v9.py)（Release 也会附带）。
 * **步骤**：
   1. 装 uv 包管理器（PowerShell）：`powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"`
   2. 装 Python 3.12：`uv python install 3.12`
