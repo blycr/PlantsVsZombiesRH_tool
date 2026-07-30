@@ -42,8 +42,9 @@ For best results, start the trainer after you enter a level.
 
 ### D. Python source
 
-1. Install Python 3.12 (e.g. via [uv](https://github.com/astral-sh/uv)).
-2. After entering a level, run:
+1. Download `pvz_fusion_cheats_v9.py` from the Release page.
+2. Install Python 3.12 (e.g. via [uv](https://github.com/astral-sh/uv)).
+3. After entering a level, in the folder that contains the script, run:
 
 ```text
 python pvz_fusion_cheats_v9.py

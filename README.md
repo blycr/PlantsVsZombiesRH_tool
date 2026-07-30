@@ -42,8 +42,9 @@ Release 中通常包含：
 
 ### D. Python 源码
 
-1. 安装 Python 3.12（可用 [uv](https://github.com/astral-sh/uv)）。
-2. 进关卡后，在含有脚本的目录执行：
+1. 从 Release 下载 `pvz_fusion_cheats_v9.py`。
+2. 安装 Python 3.12（可用 [uv](https://github.com/astral-sh/uv)）。
+3. 进关卡后，在脚本所在目录执行：
 
 ```text
 python pvz_fusion_cheats_v9.py

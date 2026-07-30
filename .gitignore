@@ -264,3 +264,10 @@ pvz_fusion_cheats_wpf.exe
 # Maintainer scripts (local only)
 /scripts/
 
+
+# Release-only artifacts (distributed via GitHub Releases, keep local)
+/pvz_fusion_cheats_v9.py
+/pvz_fusion_cheats.ct
+/pvz_fusion_cheats_v*.py
+/SHA256SUMS
+/SHA256SUMS.minisig
