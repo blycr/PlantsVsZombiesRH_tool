@@ -91,20 +91,49 @@ namespace pvz_fusion_cheats_wpf
         // Helper methods
         protected static byte[] MakeJmp(IntPtr from, IntPtr to)
         {
-            int offset = (int)((long)to - ((long)from + 5));
+            long offsetLong = (long)to - ((long)from + 5);
+            if (offsetLong > int.MaxValue || offsetLong < int.MinValue)
+                throw new InvalidOperationException($"Jump too far for rel32: 0x{from.ToInt64():X} -> 0x{to.ToInt64():X}");
             byte[] code = new byte[5];
             code[0] = 0xE9;
-            Array.Copy(BitConverter.GetBytes(offset), 0, code, 1, 4);
+            Array.Copy(BitConverter.GetBytes((int)offsetLong), 0, code, 1, 4);
             return code;
         }
 
         protected static byte[] MakeCall(IntPtr from, IntPtr to)
         {
-            int offset = (int)((long)to - ((long)from + 5));
+            long offsetLong = (long)to - ((long)from + 5);
+            if (offsetLong > int.MaxValue || offsetLong < int.MinValue)
+                throw new InvalidOperationException($"Call too far for rel32: 0x{from.ToInt64():X} -> 0x{to.ToInt64():X}");
             byte[] code = new byte[5];
             code[0] = 0xE8;
-            Array.Copy(BitConverter.GetBytes(offset), 0, code, 1, 4);
+            Array.Copy(BitConverter.GetBytes((int)offsetLong), 0, code, 1, 4);
             return code;
+        }
+
+        /// <summary>Write all patches; on failure attempt to restore any successful writes in reverse.</summary>
+        protected bool CommitWrites(NativeMemory pm, params (IntPtr Address, byte[] Data)[] writes)
+        {
+            var done = new List<(IntPtr Address, byte[] Original)>();
+            try
+            {
+                foreach (var (address, data) in writes)
+                {
+                    byte[] original = pm.ReadBytes(address, data.Length);
+                    if (!pm.WriteBytes(address, data))
+                        throw new InvalidOperationException($"WriteProcessMemory failed at 0x{address.ToInt64():X}");
+                    done.Add((address, original));
+                }
+                return true;
+            }
+            catch
+            {
+                for (int i = done.Count - 1; i >= 0; i--)
+                {
+                    try { pm.WriteBytes(done[i].Address, done[i].Original); } catch { }
+                }
+                return false;
+            }
         }
     }
 
@@ -174,7 +203,7 @@ namespace pvz_fusion_cheats_wpf
                 IntPtr backCard = (IntPtr)((long)_cardCdAddr + 6);
                 cardCode.AddRange(MakeJmp((IntPtr)((long)_cardCave + cardCode.Count), backCard));
 
-                pm.WriteBytes(_cardCave, cardCode.ToArray());
+                if (!pm.WriteBytes(_cardCave, cardCode.ToArray())) return false;
             }
 
             // Allocate InGameTool cave
@@ -201,7 +230,7 @@ namespace pvz_fusion_cheats_wpf
                 IntPtr backTool = (IntPtr)((long)_toolCdAddr + 6);
                 toolCode.AddRange(MakeJmp((IntPtr)((long)_toolCave + toolCode.Count), backTool));
 
-                pm.WriteBytes(_toolCave, toolCode.ToArray());
+                if (!pm.WriteBytes(_toolCave, toolCode.ToArray())) return false;
             }
 
             // Write Hooks
@@ -215,12 +244,16 @@ namespace pvz_fusion_cheats_wpf
             Array.Copy(jmpTool, 0, patchTool, 0, 5);
             patchTool[5] = 0x90; // NOP
 
+            if (!CommitWrites(pm, (_cardCdAddr, patchCard), (_toolCdAddr, patchTool)))
+
+
+                return false;
+
+
             Patches.Add(new PatchRecord(_cardCdAddr, origCard, patchCard));
+
+
             Patches.Add(new PatchRecord(_toolCdAddr, origTool, patchTool));
-
-            pm.WriteBytes(_cardCdAddr, patchCard);
-            pm.WriteBytes(_toolCdAddr, patchTool);
-
             Enabled = true;
             return true;
         }
@@ -295,7 +328,7 @@ namespace pvz_fusion_cheats_wpf
                 byte[] jmp = MakeJmp((IntPtr)((long)_cave1Addr + 9), (IntPtr)((long)_getSunAddr + 6));
                 Array.Copy(jmp, 0, caveCode1, 9, 5);
 
-                pm.WriteBytes(_cave1Addr, caveCode1);
+                if (!pm.WriteBytes(_cave1Addr, caveCode1)) return false;
             }
 
             if (_cave2Addr == IntPtr.Zero)
@@ -316,7 +349,7 @@ namespace pvz_fusion_cheats_wpf
                 byte[] jmp = MakeJmp((IntPtr)((long)_cave2Addr + 9), (IntPtr)((long)_useSunAddr + 6));
                 Array.Copy(jmp, 0, caveCode2, 9, 5);
 
-                pm.WriteBytes(_cave2Addr, caveCode2);
+                if (!pm.WriteBytes(_cave2Addr, caveCode2)) return false;
             }
 
             byte[] patchGet = new byte[6];
@@ -332,12 +365,16 @@ namespace pvz_fusion_cheats_wpf
             byte[] origGetVerify = { 0x01, 0x86, 0x08, 0x01, 0x00, 0x00 };
             byte[] origUseVerify = { 0x29, 0x83, 0x08, 0x01, 0x00, 0x00 };
 
+            if (!CommitWrites(pm, (_getSunAddr, patchGet), (_useSunAddr, patchUse)))
+
+
+                return false;
+
+
             Patches.Add(new PatchRecord(_getSunAddr, origGetVerify, patchGet));
+
+
             Patches.Add(new PatchRecord(_useSunAddr, origUseVerify, patchUse));
-
-            pm.WriteBytes(_getSunAddr, patchGet);
-            pm.WriteBytes(_useSunAddr, patchUse);
-
             Enabled = true;
             return true;
         }
@@ -399,14 +436,19 @@ namespace pvz_fusion_cheats_wpf
             byte[] orig2V = { 0x0F, 0x85, 0xE0, 0x00, 0x00, 0x00 };
             byte[] orig3V = { 0x0F, 0x84, 0x26, 0xFF, 0xFF, 0xFF };
 
+            if (!CommitWrites(pm, (_chkboxAddr, patch1), (_skipAddr, patch2), (_failAddr, patch3)))
+
+
+                return false;
+
+
             Patches.Add(new PatchRecord(_chkboxAddr, orig1V, patch1));
+
+
             Patches.Add(new PatchRecord(_skipAddr, orig2V, patch2));
+
+
             Patches.Add(new PatchRecord(_failAddr, orig3V, patch3));
-
-            pm.WriteBytes(_chkboxAddr, patch1);
-            pm.WriteBytes(_skipAddr, patch2);
-            pm.WriteBytes(_failAddr, patch3);
-
             Enabled = true;
             return true;
         }
@@ -481,7 +523,7 @@ namespace pvz_fusion_cheats_wpf
                 Array.Copy(jmpCode, 0, caveCode, 19, 5);
                 caveCode[24] = 0xC3;
 
-                pm.WriteBytes(_caveAddr, caveCode);
+                if (!pm.WriteBytes(_caveAddr, caveCode)) return false;
             }
 
             byte[] patchTakedamage = { 0xC3, 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 };
@@ -494,12 +536,16 @@ namespace pvz_fusion_cheats_wpf
             byte[] origTakedamageVerify = { 0x48, 0x8B, 0xC4, 0x48, 0x89, 0x58, 0x10 };
             byte[] origDieVerify2 = { 0x48, 0x8B, 0xC4, 0x48, 0x89, 0x58, 0x18, 0x89, 0x50, 0x10, 0x48, 0x89, 0x48, 0x08 };
 
+            if (!CommitWrites(pm, (_takedamageAddr, patchTakedamage), (_dieAddr, patchDie)))
+
+
+                return false;
+
+
             Patches.Add(new PatchRecord(_takedamageAddr, origTakedamageVerify, patchTakedamage));
+
+
             Patches.Add(new PatchRecord(_dieAddr, origDieVerify2, patchDie));
-
-            pm.WriteBytes(_takedamageAddr, patchTakedamage);
-            pm.WriteBytes(_dieAddr, patchDie);
-
             Enabled = true;
             return true;
         }
@@ -564,7 +610,7 @@ namespace pvz_fusion_cheats_wpf
                 Array.Copy(movEdx, 0, caveCode, 0, 5);
                 Array.Copy(origBytes, 0, caveCode, 5, 10);
                 Array.Copy(MakeJmp((IntPtr)((long)_caveAddr + 15), (IntPtr)((long)_targetAddr + 10)), 0, caveCode, 15, 5);
-                pm.WriteBytes(_caveAddr, caveCode);
+                if (!pm.WriteBytes(_caveAddr, caveCode)) return false;
             }
 
             if (_applyCave == IntPtr.Zero)
@@ -584,7 +630,7 @@ namespace pvz_fusion_cheats_wpf
                 Array.Copy(movR8d, 0, applyCode, 0, 6);
                 Array.Copy(origApply, 0, applyCode, 6, 9);
                 Array.Copy(MakeJmp((IntPtr)((long)_applyCave + 15), (IntPtr)((long)_applyAddr + 9)), 0, applyCode, 15, 5);
-                pm.WriteBytes(_applyCave, applyCode);
+                if (!pm.WriteBytes(_applyCave, applyCode)) return false;
             }
 
             byte[] patchTd = new byte[10];
@@ -595,11 +641,16 @@ namespace pvz_fusion_cheats_wpf
             Array.Copy(MakeJmp(_applyAddr, _applyCave), 0, patchAp, 0, 5);
             for (int i = 5; i < 9; i++) patchAp[i] = 0x90;
 
-            Patches.Add(new PatchRecord(_targetAddr, origBytes, patchTd));
-            Patches.Add(new PatchRecord(_applyAddr, origApply, patchAp));
+            if (!CommitWrites(pm, (_targetAddr, patchTd), (_applyAddr, patchAp)))
 
-            pm.WriteBytes(_targetAddr, patchTd);
-            pm.WriteBytes(_applyAddr, patchAp);
+
+                return false;
+
+
+            Patches.Add(new PatchRecord(_targetAddr, origBytes, patchTd));
+
+
+            Patches.Add(new PatchRecord(_applyAddr, origApply, patchAp));
             Enabled = true;
             return true;
         }
@@ -696,8 +747,8 @@ namespace pvz_fusion_cheats_wpf
                 Array.Copy(jmpRise, 0, riseCode, 17, 5);
                 Array.Copy(BitConverter.GetBytes(0.05f), 0, riseCode, 22, 4);
 
-                pm.WriteBytes(_chewCaveAddr, chewCode);
-                pm.WriteBytes(_riseCaveAddr, riseCode);
+                if (!pm.WriteBytes(_chewCaveAddr, chewCode)) return false;
+                if (!pm.WriteBytes(_riseCaveAddr, riseCode)) return false;
             }
 
             byte[] patchChew = new byte[8];
@@ -713,12 +764,16 @@ namespace pvz_fusion_cheats_wpf
             byte[] origChewVerify = { 0xF3, 0x0F, 0x10, 0xB7, 0x4C, 0x01, 0x00, 0x00 };
             byte[] origRiseVerify = { 0x40, 0x53, 0x48, 0x81, 0xEC, 0x90, 0x00, 0x00, 0x00 };
 
+            if (!CommitWrites(pm, (_chewHookAddr, patchChew), (_riseHookAddr, patchRise)))
+
+
+                return false;
+
+
             Patches.Add(new PatchRecord(_chewHookAddr, origChewVerify, patchChew));
+
+
             Patches.Add(new PatchRecord(_riseHookAddr, origRiseVerify, patchRise));
-
-            pm.WriteBytes(_chewHookAddr, patchChew);
-            pm.WriteBytes(_riseHookAddr, patchRise);
-
             Enabled = true;
             return true;
         }
@@ -825,11 +880,11 @@ namespace pvz_fusion_cheats_wpf
                 for (int i = 0; i < 4; i++) code[movssOff + 4 + i] = dispBytes[i];
 
                 _speedFloatAddr = (IntPtr)((long)_caveAddr + floatOff);
-                pm.WriteBytes(_caveAddr, code.ToArray());
+                if (!pm.WriteBytes(_caveAddr, code.ToArray())) return false;
             }
             else if (_speedFloatAddr != IntPtr.Zero)
             {
-                pm.WriteBytes(_speedFloatAddr, BitConverter.GetBytes((float)speed));
+                if (!pm.WriteBytes(_speedFloatAddr, BitConverter.GetBytes((float)speed))) return false;
             }
 
             if (Patches.Count == 0)
@@ -837,8 +892,9 @@ namespace pvz_fusion_cheats_wpf
                 byte[] patch = new byte[6];
                 Array.Copy(MakeJmp(_boardUpdateAddr, _caveAddr), 0, patch, 0, 5);
                 patch[5] = 0x90;
+                if (!CommitWrites(pm, (_boardUpdateAddr, patch)))
+                    return false;
                 Patches.Add(new PatchRecord(_boardUpdateAddr, orig, patch));
-                pm.WriteBytes(_boardUpdateAddr, patch);
             }
 
             Speed = speed;
@@ -865,7 +921,7 @@ namespace pvz_fusion_cheats_wpf
                 byte[] tail = { 0xFF, 0xD0, 0x48, 0x83, 0xC4, 0x28, 0xC3, 0x90, 0x90, 0x90 };
                 Array.Copy(tail, 0, shellcode, 22, tail.Length);
                 Array.Copy(BitConverter.GetBytes((float)speed), 0, shellcode, 32, 4);
-                pm.WriteBytes(cave, shellcode);
+                if (!pm.WriteBytes(cave, shellcode)) return false;
 
                 if (pm.StartThread(cave, out IntPtr threadHandle))
                 {

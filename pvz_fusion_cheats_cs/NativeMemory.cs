@@ -55,7 +55,11 @@ namespace pvz_fusion_cheats_cs
 
             GameProcess = processes[0];
             ProcessHandle = OpenProcess(PROCESS_ALL_ACCESS, false, GameProcess.Id);
-            if (ProcessHandle == IntPtr.Zero) return false;
+            if (ProcessHandle == IntPtr.Zero)
+            {
+                GameProcess = null!;
+                return false;
+            }
 
             try
             {
@@ -71,8 +75,15 @@ namespace pvz_fusion_cheats_cs
             }
             catch
             {
-                // Catch permission denied during module enumeration and return false to trigger UAC elevation.
+                // Permission denied during module enumeration — fall through to cleanup.
             }
+
+            // OpenProcess succeeded but module was not found / not readable: do not leak the handle.
+            CloseHandle(ProcessHandle);
+            ProcessHandle = IntPtr.Zero;
+            GameProcess = null!;
+            BaseAddress = IntPtr.Zero;
+            ModuleSize = 0;
             return false;
         }
 
@@ -84,14 +95,22 @@ namespace pvz_fusion_cheats_cs
 
         public byte[] ReadBytes(IntPtr address, int size)
         {
+            if (size <= 0)
+                throw new ArgumentOutOfRangeException(nameof(size));
+            if (ProcessHandle == IntPtr.Zero)
+                throw new InvalidOperationException("Not attached to a process.");
+
             byte[] buffer = new byte[size];
-            ReadProcessMemory(ProcessHandle, address, buffer, size, out _);
+            if (!ReadProcessMemory(ProcessHandle, address, buffer, size, out int bytesRead) || bytesRead != size)
+                throw new InvalidOperationException($"ReadProcessMemory failed at 0x{address.ToInt64():X} (wanted {size}, got {bytesRead}).");
             return buffer;
         }
 
         public bool WriteBytes(IntPtr address, byte[] data)
         {
-            return WriteProcessMemory(ProcessHandle, address, data, data.Length, out _);
+            if (data == null || data.Length == 0 || ProcessHandle == IntPtr.Zero)
+                return false;
+            return WriteProcessMemory(ProcessHandle, address, data, data.Length, out int written) && written == data.Length;
         }
 
         public IntPtr Allocate(uint size, IntPtr preferredAddress = default)
