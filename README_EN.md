@@ -69,5 +69,12 @@ python pvz_fusion_cheats_v9.py
 
 * Memory-only; save files are not modified. Exiting the trainer restores normal behavior.
 * Built for Plants vs. Zombies Fusion Edition **3.8.1** only.
-* Completely free — if you paid for it, you were scammed.
-* For offline entertainment and learning; use at your own risk.
+* Best used after you enter a level.
+
+---
+
+## License & Disclaimer
+
+* **100% Free**: This trainer (including all `.exe` binaries, `.ct` files, and Python source) is **completely free**. If you paid to obtain it, you have been scammed — request a refund.
+* **Non-Commercial Use**: Released under a custom **Non-Commercial, Educational Use Only and Anti-Scam License**. See [LICENSE](./LICENSE). Commercial sale, paid bundling, or paid redistribution is prohibited.
+* **Disclaimer**: For offline entertainment and technical learning only. You use this tool at your own risk. The author is not liable for crashes, data loss, bans, or any other consequences.
