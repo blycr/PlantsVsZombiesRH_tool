@@ -18,11 +18,12 @@ namespace pvz_fusion_cheats_wpf
             return IsEnglish ? en : zh;
         }
 
-        private NativeMemory pm = null;
+        private NativeMemory? pm = null;
         private IntPtr baseAddress = IntPtr.Zero;
         private DispatcherTimer attachTimer;
         private bool attached = false;
         private bool ignoreEvents = false;
+        private bool unsupportedBuild = false;
 
         private CooldownFeature cooldownFeature = new CooldownFeature();
         private SunFeature sunFeature = new SunFeature();
@@ -52,11 +53,11 @@ namespace pvz_fusion_cheats_wpf
         public void UpdateLanguageUI()
         {
             // Update Window Title
-            this.Title = T("PVZ Fusion 修改器 v9", "PVZ Fusion Trainer v9");
+            this.Title = T($"PVZ Fusion 修改器 {PvzFusionTrainer.GameBuild.TrainerVersion}", $"PVZ Fusion Trainer {PvzFusionTrainer.GameBuild.TrainerVersion}");
 
             // Header Texts
-            Text_Title.Text = T("PVZ Fusion 3.8.1 修改器", "PVZ Fusion 3.8.1 Trainer");
-            Text_SubTitle.Text = T("v9 GUI", "v9 GUI");
+            Text_Title.Text = T($"PVZ Fusion {PvzFusionTrainer.GameBuild.Version} 修改器", $"PVZ Fusion {PvzFusionTrainer.GameBuild.Version} Trainer");
+            Text_SubTitle.Text = $"{PvzFusionTrainer.GameBuild.TrainerVersion} GUI";
 
             // Language switch button content
             Btn_Language.Content = IsEnglish ? "中" : "EN";
@@ -70,7 +71,12 @@ namespace pvz_fusion_cheats_wpf
             else
             {
                 Process[] p = Process.GetProcessesByName("PlantsVsZombiesRH");
-                if (p.Length > 0)
+                if (p.Length > 0 && unsupportedBuild)
+                {
+                    StatusLabel.Text = T("版本不匹配，仅支持 4.0.5", "Unsupported build (4.0.5 required)");
+                    StatusLabel.Foreground = new SolidColorBrush(Color.FromRgb(245, 158, 11));
+                }
+                else if (p.Length > 0)
                 {
                     StatusLabel.Text = T("权限不足，请使用管理员身份运行", "Access denied. Run as Administrator");
                     StatusLabel.Foreground = new SolidColorBrush(Color.FromRgb(245, 158, 11));
@@ -145,6 +151,7 @@ namespace pvz_fusion_cheats_wpf
             pm = new NativeMemory();
             if (pm.Attach("PlantsVsZombiesRH", "GameAssembly.dll"))
             {
+                unsupportedBuild = false;
                 baseAddress = pm.BaseAddress;
                 attached = true;
 
@@ -164,6 +171,7 @@ namespace pvz_fusion_cheats_wpf
             }
             else
             {
+                unsupportedBuild = pm.UnsupportedBuild;
                 pm.Dispose();
                 pm = null;
 
@@ -174,9 +182,13 @@ namespace pvz_fusion_cheats_wpf
                     StatusDot.Background = new SolidColorBrush(Color.FromRgb(245, 158, 11)); // Yellow/Orange
                     UpdateLanguageUI();
 
-                    if (!IsAdmin())
+                    if (!unsupportedBuild && !IsAdmin())
                     {
                         Btn_AdminRelaunch.Visibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        Btn_AdminRelaunch.Visibility = Visibility.Collapsed;
                     }
                 }
                 else
@@ -232,14 +244,14 @@ namespace pvz_fusion_cheats_wpf
             Slider_Speed.IsEnabled = false;
             Slider_Speed.Value = 1.0;
 
-            // Reset features states
-            cooldownFeature.Cleanup(null!);
-            sunFeature.Cleanup(null!);
-            placementFeature.Cleanup(null!);
-            invincibleFeature.Cleanup(null!);
-            oneHitKillFeature.Cleanup(null!);
-            accelerateFeature.Cleanup(null!);
-            speedFeature.Cleanup(null!);
+            // A new game process has different addresses and no previous caves.
+            cooldownFeature = new CooldownFeature();
+            sunFeature = new SunFeature();
+            placementFeature = new PlacementFeature();
+            invincibleFeature = new InvincibleFeature();
+            oneHitKillFeature = new OneHitKillFeature();
+            accelerateFeature = new AccelerateFeature();
+            speedFeature = new SpeedFeature();
 
             ignoreEvents = false;
         }

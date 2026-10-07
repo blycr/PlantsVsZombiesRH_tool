@@ -245,7 +245,7 @@ pvz_fusion_cheats_wpf.exe
 # Game update notice
 /融合版3.7版本更新公告.txt
 
-# Release signing secrets (public key minisign.pub is committed)
+# Release signing secrets (publish a public key separately when signing is used)
 /signing/
 *.key
 .minisign/
@@ -256,6 +256,11 @@ pvz_fusion_cheats_wpf.exe
 # Generated release checksums (publish on GitHub Release only)
 /SHA256SUMS
 /SHA256SUMS.minisig
+
+# Verification runner outputs
+/tests/bin/
+/tests/obj/
+/hooks.json
 
 # Local-only maintainer notes (not for public repo)
 /docs-local/
@@ -269,5 +274,3 @@ pvz_fusion_cheats_wpf.exe
 /pvz_fusion_cheats_v9.py
 /pvz_fusion_cheats.ct
 /pvz_fusion_cheats_v*.py
-/SHA256SUMS
-/SHA256SUMS.minisig

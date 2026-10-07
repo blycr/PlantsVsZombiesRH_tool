@@ -65,7 +65,7 @@ namespace pvz_fusion_cheats_cs
                 else
                     return Program.T($"开启失败: '{Name}'，请确认已在关卡内", $"Failed to enable: '{Name}', please make sure you are in a level");
             }
-            return null;
+            return Program.T($"关闭失败: '{Name}'", $"Failed to disable feature: '{Name}'");
         }
 
         public abstract bool Enable(NativeMemory pm, IntPtr baseAddress, Program modifier);
@@ -184,8 +184,8 @@ namespace pvz_fusion_cheats_cs
             if (Enabled) return true;
 
             long baseLong = baseAddress.ToInt64();
-            _cardCdAddr = (IntPtr)(baseLong + 0x8548B0);
-            _toolCdAddr = (IntPtr)(baseLong + 0x666B20);
+            _cardCdAddr = (IntPtr)(baseLong + 0x957550);
+            _toolCdAddr = (IntPtr)(baseLong + 0x72DD30);
 
             byte[] origCard = { 0x40, 0x53, 0x48, 0x83, 0xEC, 0x30 };
             byte[] origTool = { 0x40, 0x53, 0x48, 0x83, 0xEC, 0x40 };
@@ -255,8 +255,8 @@ namespace pvz_fusion_cheats_cs
                 List<byte> toolCode = new List<byte>();
                 // mov eax, [rcx+0x20] (8B 41 20)
                 toolCode.AddRange(new byte[] { 0x8B, 0x41, 0x20 });
-                // mov [rcx+0x24], eax (89 41 24)
-                toolCode.AddRange(new byte[] { 0x89, 0x41, 0x24 });
+                // mov [rcx+0x28], eax (89 41 28)
+                toolCode.AddRange(new byte[] { 0x89, 0x41, 0x28 });
                 // push rbx; sub rsp, 40h (40 53 48 83 EC 40)
                 toolCode.AddRange(new byte[] { 0x40, 0x53, 0x48, 0x83, 0xEC, 0x40 });
                 // jmp back
@@ -315,8 +315,8 @@ namespace pvz_fusion_cheats_cs
             // Pattern scan for GetSun and UseSun
             if (_getSunAddr == IntPtr.Zero)
             {
-                byte[] getsunPattern = { 0x01, 0x86, 0x08, 0x01, 0x00, 0x00 }; // add [rsi+0x108], eax
-                _getSunAddr = pm.FindPattern(getsunPattern, 0x88C000, 0x88D000);
+                byte[] getsunPattern = { 0x01, 0x86, 0x10, 0x01, 0x00, 0x00 }; // add [rsi+0x110], eax
+                _getSunAddr = pm.FindPattern(getsunPattern, 0x9FF990, 0x9FFD00);
                 if (_getSunAddr == IntPtr.Zero)
                 {
                     Console.WriteLine(Program.T("[-] 未能定位 Board.GetSun 阳光增加点", "[-] Failed to locate Board.GetSun (add sun address)"));
@@ -326,8 +326,8 @@ namespace pvz_fusion_cheats_cs
 
             if (_useSunAddr == IntPtr.Zero)
             {
-                byte[] usesunPattern = { 0x29, 0x83, 0x08, 0x01, 0x00, 0x00 }; // sub [rbx+0x108], eax
-                _useSunAddr = pm.FindPattern(usesunPattern, 0x89A000, 0x89B000);
+                byte[] usesunPattern = { 0x29, 0x83, 0x10, 0x01, 0x00, 0x00 }; // sub [rbx+0x110], eax
+                _useSunAddr = pm.FindPattern(usesunPattern, 0xA0D380, 0xA0D430);
                 if (_useSunAddr == IntPtr.Zero)
                 {
                     Console.WriteLine(Program.T("[-] 未能定位 Board.UseSun 阳光扣除点", "[-] Failed to locate Board.UseSun (subtract sun address)"));
@@ -339,8 +339,8 @@ namespace pvz_fusion_cheats_cs
             {
                 byte[] v1 = pm.ReadBytes(_getSunAddr, 6);
                 byte[] v2 = pm.ReadBytes(_useSunAddr, 6);
-                byte[] origGet = { 0x01, 0x86, 0x08, 0x01, 0x00, 0x00 };
-                byte[] origUse = { 0x29, 0x83, 0x08, 0x01, 0x00, 0x00 };
+                byte[] origGet = { 0x01, 0x86, 0x10, 0x01, 0x00, 0x00 };
+                byte[] origUse = { 0x29, 0x83, 0x10, 0x01, 0x00, 0x00 };
 
                 for (int i = 0; i < 6; i++)
                 {
@@ -373,10 +373,10 @@ namespace pvz_fusion_cheats_cs
 
                 // getsun cave bytes:
                 // 1. imul eax, eax, 100 (6B C0 64)
-                // 2. add [rsi+0x108], eax (01 86 08 01 00 00)
+                // 2. add [rsi+0x110], eax (01 86 10 01 00 00)
                 // 3. jmp getsun_addr + 6
                 byte[] caveCode1 = new byte[14];
-                byte[] instr = { 0x6B, 0xC0, 0x64, 0x01, 0x86, 0x08, 0x01, 0x00, 0x00 };
+                byte[] instr = { 0x6B, 0xC0, 0x64, 0x01, 0x86, 0x10, 0x01, 0x00, 0x00 };
                 Array.Copy(instr, 0, caveCode1, 0, 9);
                 byte[] jmp = MakeJmp((IntPtr)((long)_cave1Addr + 9), (IntPtr)((long)_getSunAddr + 6));
                 Array.Copy(jmp, 0, caveCode1, 9, 5);
@@ -399,10 +399,10 @@ namespace pvz_fusion_cheats_cs
 
                 // usesun cave bytes:
                 // 1. imul eax, eax, 100 (6B C0 64)
-                // 2. add [rbx+0x108], eax (01 83 08 01 00 00) -> convert sub to add!
+                // 2. add [rbx+0x110], eax (01 83 10 01 00 00) -> convert sub to add!
                 // 3. jmp usesun_addr + 6
                 byte[] caveCode2 = new byte[14];
-                byte[] instr = { 0x6B, 0xC0, 0x64, 0x01, 0x83, 0x08, 0x01, 0x00, 0x00 };
+                byte[] instr = { 0x6B, 0xC0, 0x64, 0x01, 0x83, 0x10, 0x01, 0x00, 0x00 };
                 Array.Copy(instr, 0, caveCode2, 0, 9);
                 byte[] jmp = MakeJmp((IntPtr)((long)_cave2Addr + 9), (IntPtr)((long)_useSunAddr + 6));
                 Array.Copy(jmp, 0, caveCode2, 9, 5);
@@ -420,8 +420,8 @@ namespace pvz_fusion_cheats_cs
             Array.Copy(jmpUse, 0, patchUse, 0, 5);
             patchUse[5] = 0x90; // NOP
 
-            byte[] origGetVerify = { 0x01, 0x86, 0x08, 0x01, 0x00, 0x00 };
-            byte[] origUseVerify = { 0x29, 0x83, 0x08, 0x01, 0x00, 0x00 };
+            byte[] origGetVerify = { 0x01, 0x86, 0x10, 0x01, 0x00, 0x00 };
+            byte[] origUseVerify = { 0x29, 0x83, 0x10, 0x01, 0x00, 0x00 };
 
             if (!CommitWrites(pm, (_getSunAddr, patchGet), (_useSunAddr, patchUse)))
 
@@ -457,21 +457,21 @@ namespace pvz_fusion_cheats_cs
         {
             if (Enabled) return true;
 
-            _chkboxAddr = (IntPtr)((long)baseAddress + 0x85A4F0);
-            _skipAddr = (IntPtr)((long)baseAddress + 0x863A5C);
-            _failAddr = (IntPtr)((long)baseAddress + 0x863A9D);
+            _chkboxAddr = (IntPtr)((long)baseAddress + 0x9D8850);
+            _skipAddr = (IntPtr)((long)baseAddress + 0x9DF552);
+            _failAddr = (IntPtr)((long)baseAddress + 0x9DF593);
 
             try
             {
-                byte[] v1 = pm.ReadBytes(_chkboxAddr, 3);
+                byte[] v1 = pm.ReadBytes(_chkboxAddr, 5);
                 byte[] v2 = pm.ReadBytes(_skipAddr, 6);
                 byte[] v3 = pm.ReadBytes(_failAddr, 6);
 
-                byte[] orig1 = { 0x48, 0x8B, 0xC4 };
+                byte[] orig1 = { 0x48, 0x89, 0x5C, 0x24, 0x08 };
                 byte[] orig2 = { 0x0F, 0x85, 0xE0, 0x00, 0x00, 0x00 };
-                byte[] orig3 = { 0x0F, 0x84, 0x26, 0xFF, 0xFF, 0xFF };
+                byte[] orig3 = { 0x0F, 0x84, 0x27, 0xFF, 0xFF, 0xFF };
 
-                for (int i = 0; i < 3; i++)
+                for (int i = 0; i < 5; i++)
                 {
                     if (v1[i] != orig1[i])
                     {
@@ -496,13 +496,13 @@ namespace pvz_fusion_cheats_cs
             }
 
             // Patch bytes
-            byte[] patch1 = { 0xB0, 0x01, 0xC3 }; // mov al, 1; ret
+            byte[] patch1 = { 0xB0, 0x01, 0xC3, 0x90, 0x90 }; // mov al, 1; ret
             byte[] patch2 = { 0x90, 0x90, 0x90, 0x90, 0x90, 0x90 }; // NOPs
             byte[] patch3 = { 0x0F, 0x84, 0x9F, 0x00, 0x00, 0x00 }; // Redirect jump to normal placement
 
-            byte[] orig1V = { 0x48, 0x8B, 0xC4 };
+            byte[] orig1V = { 0x48, 0x89, 0x5C, 0x24, 0x08 };
             byte[] orig2V = { 0x0F, 0x85, 0xE0, 0x00, 0x00, 0x00 };
-            byte[] orig3V = { 0x0F, 0x84, 0x26, 0xFF, 0xFF, 0xFF };
+            byte[] orig3V = { 0x0F, 0x84, 0x27, 0xFF, 0xFF, 0xFF };
 
             if (!CommitWrites(pm, (_chkboxAddr, patch1), (_skipAddr, patch2), (_failAddr, patch3)))
 
@@ -541,8 +541,8 @@ namespace pvz_fusion_cheats_cs
         {
             if (Enabled) return true;
 
-            _takedamageAddr = (IntPtr)((long)baseAddress + 0x3F51D0);
-            _dieAddr = (IntPtr)((long)baseAddress + 0x3EE9C0);
+            _takedamageAddr = (IntPtr)((long)baseAddress + 0x46EAC0);
+            _dieAddr = (IntPtr)((long)baseAddress + 0x467D50);
 
             try
             {
@@ -655,18 +655,18 @@ namespace pvz_fusion_cheats_cs
         {
             if (Enabled) return true;
 
-            // TakeDamage prologue is 10 bytes; ApplyDamage prologue is 9 bytes
-            _targetAddr = (IntPtr)((long)baseAddress + 0x5A0BD0);
-            _applyAddr = (IntPtr)((long)baseAddress + 0x592900);
-            byte[] origBytes = { 0x40, 0x56, 0x41, 0x56, 0x41, 0x57, 0x48, 0x83, 0xEC, 0x60 };
+            // TakeDamage prologue is 7 bytes; ApplyDamage prologue is 9 bytes
+            _targetAddr = (IntPtr)((long)baseAddress + 0x65D080);
+            _applyAddr = (IntPtr)((long)baseAddress + 0x64E280);
+            byte[] origBytes = { 0x40, 0x55, 0x56, 0x41, 0x54, 0x41, 0x57 };
             byte[] origApply = { 0x40, 0x53, 0x57, 0x41, 0x56, 0x48, 0x83, 0xEC, 0x30 };
 
             try
             {
-                byte[] verify = pm.ReadBytes(_targetAddr, 10);
+                byte[] verify = pm.ReadBytes(_targetAddr, 7);
                 byte[] verifyApply = pm.ReadBytes(_applyAddr, 9);
 
-                for (int i = 0; i < 10; i++)
+                for (int i = 0; i < 7; i++)
                 {
                     if (verify[i] != origBytes[i])
                     {
@@ -702,13 +702,13 @@ namespace pvz_fusion_cheats_cs
                     return false;
                 }
 
-                // mov edx, 999999 + original 10 bytes + jmp back
-                byte[] caveCode = new byte[20];
+                // mov edx, 1,000,000 + original 7 bytes + jmp back
+                byte[] caveCode = new byte[17];
                 byte[] movEdx = { 0xBA, 0x40, 0x42, 0x0F, 0x00 };
                 Array.Copy(movEdx, 0, caveCode, 0, 5);
-                Array.Copy(origBytes, 0, caveCode, 5, 10);
-                byte[] jmpCode = MakeJmp((IntPtr)((long)_caveAddr + 15), (IntPtr)((long)_targetAddr + 10));
-                Array.Copy(jmpCode, 0, caveCode, 15, 5);
+                Array.Copy(origBytes, 0, caveCode, 5, 7);
+                byte[] jmpCode = MakeJmp((IntPtr)((long)_caveAddr + 12), (IntPtr)((long)_targetAddr + 7));
+                Array.Copy(jmpCode, 0, caveCode, 12, 5);
                 if (!pm.WriteBytes(_caveAddr, caveCode)) return false;
             }
 
@@ -725,7 +725,7 @@ namespace pvz_fusion_cheats_cs
                     return false;
                 }
 
-                // mov r8d, 999999 + original 9 bytes + jmp back
+                // mov r8d, 1,000,000 + original 9 bytes + jmp back
                 byte[] applyCode = new byte[20];
                 byte[] movR8d = { 0x41, 0xB8, 0x40, 0x42, 0x0F, 0x00 };
                 Array.Copy(movR8d, 0, applyCode, 0, 6);
@@ -735,9 +735,9 @@ namespace pvz_fusion_cheats_cs
                 if (!pm.WriteBytes(_applyCave, applyCode)) return false;
             }
 
-            byte[] patchTd = new byte[10];
+            byte[] patchTd = new byte[7];
             Array.Copy(MakeJmp(_targetAddr, _caveAddr), 0, patchTd, 0, 5);
-            for (int i = 5; i < 10; i++) patchTd[i] = 0x90;
+            for (int i = 5; i < 7; i++) patchTd[i] = 0x90;
 
             byte[] patchAp = new byte[9];
             Array.Copy(MakeJmp(_applyAddr, _applyCave), 0, patchAp, 0, 5);
@@ -781,18 +781,18 @@ namespace pvz_fusion_cheats_cs
         {
             if (Enabled) return true;
 
-            _chewHookAddr = (IntPtr)((long)baseAddress + 0x3F2E88);
-            _riseHookAddr = (IntPtr)((long)baseAddress + 0x412580);
+            _chewHookAddr = (IntPtr)((long)baseAddress + 0x46C48B);
+            _riseHookAddr = (IntPtr)((long)baseAddress + 0x4865B0);
 
             try
             {
-                byte[] v1 = pm.ReadBytes(_chewHookAddr, 8);
+                byte[] v1 = pm.ReadBytes(_chewHookAddr, 9);
                 byte[] v2 = pm.ReadBytes(_riseHookAddr, 9);
 
-                byte[] origChew = { 0xF3, 0x0F, 0x10, 0xB7, 0x4C, 0x01, 0x00, 0x00 };
+                byte[] origChew = { 0xF3, 0x44, 0x0F, 0x10, 0x8F, 0x54, 0x01, 0x00, 0x00 };
                 byte[] origRise = { 0x40, 0x53, 0x48, 0x81, 0xEC, 0x90, 0x00, 0x00, 0x00 };
 
-                for (int i = 0; i < 8; i++)
+                for (int i = 0; i < 9; i++)
                 {
                     if (v1[i] != origChew[i])
                     {
@@ -832,22 +832,22 @@ namespace pvz_fusion_cheats_cs
                 _chewCaveAddr = _caveAddr;
                 _riseCaveAddr = (IntPtr)((long)_caveAddr + 128);
 
-                // Build chew cave with optimized 88-byte hex code (speeds up Chomper chew and all base/fused Potato Mines arming)
-                string chewHex = "508B878801000083F817743083F81D742B83F81E742685C075148B878C01000083F80474173DC80000007D10EB00F30F10B74C01000058E900000000F30F10B74C010000F30F59350800000058E90000000090900000A041";
+                // Build chew cave with 88-byte code for Plant.attributeSpeed in xmm9 (speeds up Chomper chew and all base/fused Potato Mines arming)
+                string chewHex = "508B879001000083F817742F83F81D742A83F81E742585C075128B879401000083F80474163DC80000007D0FF3440F108F5401000058E900000000F3440F108F54010000F3440F590D0700000058E900000000900000A041";
                 byte[] chewCode = new byte[chewHex.Length / 2];
                 for (int i = 0; i < chewCode.Length; i++)
                 {
                     chewCode[i] = Convert.ToByte(chewHex.Substring(i * 2, 2), 16);
                 }
 
-                IntPtr backChew = (IntPtr)((long)_chewHookAddr + 8);
+                IntPtr backChew = (IntPtr)((long)_chewHookAddr + 9);
                 // Overwrite the relative jmp back offsets
-                // First jmp back (at offset 55) -> next instruction is at 60
-                byte[] disp1 = BitConverter.GetBytes((int)((long)backChew - ((long)_chewCaveAddr + 60)));
-                Array.Copy(disp1, 0, chewCode, 56, 4);
-                // Second jmp back (at offset 77) -> next instruction is at 82
-                byte[] disp2 = BitConverter.GetBytes((int)((long)backChew - ((long)_chewCaveAddr + 82)));
-                Array.Copy(disp2, 0, chewCode, 78, 4);
+                // First jmp displacement at 55; next instruction at 59
+                byte[] disp1 = BitConverter.GetBytes((int)((long)backChew - ((long)_chewCaveAddr + 59)));
+                Array.Copy(disp1, 0, chewCode, 55, 4);
+                // Second jmp displacement at 79; next instruction at 83
+                byte[] disp2 = BitConverter.GetBytes((int)((long)backChew - ((long)_chewCaveAddr + 83)));
+                Array.Copy(disp2, 0, chewCode, 79, 4);
 
                 // Build rise cave
                 byte[] riseCode = new byte[26];
@@ -866,17 +866,17 @@ namespace pvz_fusion_cheats_cs
                 if (!pm.WriteBytes(_riseCaveAddr, riseCode)) return false;
             }
 
-            byte[] patchChew = new byte[8];
+            byte[] patchChew = new byte[9];
             byte[] jmpChew = MakeJmp(_chewHookAddr, _chewCaveAddr);
             Array.Copy(jmpChew, 0, patchChew, 0, 5);
-            patchChew[5] = 0x90; patchChew[6] = 0x90; patchChew[7] = 0x90; // NOPs
+            patchChew[5] = 0x90; patchChew[6] = 0x90; patchChew[7] = 0x90; patchChew[8] = 0x90; // NOPs
 
             byte[] patchRise = new byte[9];
             byte[] jmpRiseHook = MakeJmp(_riseHookAddr, _riseCaveAddr);
             Array.Copy(jmpRiseHook, 0, patchRise, 0, 5);
             for (int i = 5; i < 9; i++) patchRise[i] = 0x90; // NOPs
 
-            byte[] origChewVerify = { 0xF3, 0x0F, 0x10, 0xB7, 0x4C, 0x01, 0x00, 0x00 };
+            byte[] origChewVerify = { 0xF3, 0x44, 0x0F, 0x10, 0x8F, 0x54, 0x01, 0x00, 0x00 };
             byte[] origRiseVerify = { 0x40, 0x53, 0x48, 0x81, 0xEC, 0x90, 0x00, 0x00, 0x00 };
 
             if (!CommitWrites(pm, (_chewHookAddr, patchChew), (_riseHookAddr, patchRise)))
@@ -921,7 +921,7 @@ namespace pvz_fusion_cheats_cs
         public override string OnClick(NativeMemory pm, IntPtr baseAddress, Program modifier)
         {
             Console.Write(Program.T("\n[*] 输入游戏速度倍率 (范围 0.1 ~ 10.0，输入 1.0 恢复正常): ", "\n[*] Enter game speed (range 0.1 ~ 10.0, enter 1.0 for normal): "));
-            string valStr = Console.ReadLine()?.Trim();
+            string? valStr = Console.ReadLine()?.Trim();
             if (double.TryParse(valStr, out double val))
             {
                 if (val < 0.1 || val > 10.0)
@@ -957,8 +957,8 @@ namespace pvz_fusion_cheats_cs
 
         public bool SetSpeed(NativeMemory pm, IntPtr baseAddress, Program modifier, double speed)
         {
-            _boardUpdateAddr = (IntPtr)((long)baseAddress + 0x899A20);
-            IntPtr setTs = (IntPtr)((long)baseAddress + 0x1E7C290);
+            _boardUpdateAddr = (IntPtr)((long)baseAddress + 0xA0CD30);
+            IntPtr setTs = (IntPtr)((long)baseAddress + 0x26C5460);
             byte[] orig = { 0x40, 0x53, 0x48, 0x83, 0xEC, 0x40 };
 
             try
@@ -1054,7 +1054,7 @@ namespace pvz_fusion_cheats_cs
 
         private static bool OneShotSetTimeScale(NativeMemory pm, IntPtr baseAddress, double speed)
         {
-            IntPtr setTimeScaleAddr = (IntPtr)((long)baseAddress + 0x1E7C290);
+            IntPtr setTimeScaleAddr = (IntPtr)((long)baseAddress + 0x26C5460);
             try
             {
                 IntPtr cave = pm.Allocate(64);
@@ -1100,7 +1100,7 @@ namespace pvz_fusion_cheats_cs
             return IsEnglish ? en : zh;
         }
 
-        private NativeMemory _pm = null;
+        private NativeMemory _pm = null!;
         private IntPtr _baseAddress = IntPtr.Zero;
         private List<CheatFeature> _features = new List<CheatFeature>();
 
@@ -1155,6 +1155,10 @@ namespace pvz_fusion_cheats_cs
                 return "SUCCESS";
             }
 
+            bool unsupported = _pm.UnsupportedBuild;
+            _pm.Dispose();
+            if (unsupported) return "UNSUPPORTED_BUILD";
+
             // Test if process exists but couldn't open (access denied)
             Process[] p = Process.GetProcessesByName("PlantsVsZombiesRH");
             if (p.Length > 0)
@@ -1195,8 +1199,8 @@ namespace pvz_fusion_cheats_cs
                 Console.Clear();
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine("=========================================================================================");
-                Console.WriteLine(T($"        PVZ Fusion 3.8.1 修改器 C# 原生版 (双语) - 已附加进程 PID: {_pm.GameProcess.Id}", 
-                                    $"        PVZ Fusion 3.8.1 Trainer C# Native (Bilingual) - Attached PID: {_pm.GameProcess.Id}"));
+                Console.WriteLine(T($"        PVZ Fusion {PvzFusionTrainer.GameBuild.Version} 修改器 {PvzFusionTrainer.GameBuild.TrainerVersion} (双语) - 已附加进程 PID: {_pm.GameProcess.Id}",
+                                    $"        PVZ Fusion {PvzFusionTrainer.GameBuild.Version} Trainer {PvzFusionTrainer.GameBuild.TrainerVersion} (Bilingual) - Attached PID: {_pm.GameProcess.Id}"));
                 Console.WriteLine("=========================================================================================");
                 Console.ResetColor();
 
@@ -1252,13 +1256,13 @@ namespace pvz_fusion_cheats_cs
                 }
 
                 Console.Write(T("请输入选项序号 (例如 1) 并按 Enter: ", "Please enter option number (e.g. 1) and press Enter: "));
-                string choice = Console.ReadLine()?.Trim().ToUpper();
+                string? choice = Console.ReadLine()?.Trim().ToUpperInvariant();
 
-                if (choice == "Q") break;
+                if (choice is null or "Q") break;
                 else if (choice == "L")
                 {
                     IsEnglish = !IsEnglish;
-                    Console.Title = T("PVZ Fusion 3.8.1 修改器 C# 原生版", "PVZ Fusion 3.8.1 Trainer C# Native");
+                    Console.Title = T($"PVZ Fusion {PvzFusionTrainer.GameBuild.Version} 修改器 {PvzFusionTrainer.GameBuild.TrainerVersion}", $"PVZ Fusion {PvzFusionTrainer.GameBuild.Version} Trainer {PvzFusionTrainer.GameBuild.TrainerVersion}");
                     lastErr = T("已切换语言为：中文", "Language switched to: English");
                 }
                 else if (choice == "R")
@@ -1320,14 +1324,20 @@ namespace pvz_fusion_cheats_cs
             IsEnglish = !cultName.StartsWith("zh", StringComparison.OrdinalIgnoreCase);
 
             // Configure Console properties
-            Console.Title = T("PVZ Fusion 3.8.1 修改器 C# 原生版", "PVZ Fusion 3.8.1 Trainer C# Native");
+            Console.Title = T($"PVZ Fusion {PvzFusionTrainer.GameBuild.Version} 修改器 {PvzFusionTrainer.GameBuild.TrainerVersion}", $"PVZ Fusion {PvzFusionTrainer.GameBuild.Version} Trainer {PvzFusionTrainer.GameBuild.TrainerVersion}");
             
             Program program = new Program();
 
             // Attempt initial attachment
             string status = program.AttachGame();
 
-            if (status == "ACCESS_DENIED")
+            if (status == "UNSUPPORTED_BUILD")
+            {
+                Console.WriteLine(T("[-] 游戏版本不匹配，仅支持融合版 4.0.5（当前适配构建）。", "[-] Unsupported game build. Requires PVZ Fusion 4.0.5 (supported build)."));
+                Console.ReadLine();
+                return;
+            }
+            else if (status == "ACCESS_DENIED")
             {
                 if (!IsAdmin())
                 {

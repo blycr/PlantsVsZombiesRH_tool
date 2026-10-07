@@ -44,12 +44,14 @@ namespace pvz_fusion_cheats_cs
         public const uint INFINITE = 0xFFFFFFFF;
 
         public IntPtr ProcessHandle { get; private set; } = IntPtr.Zero;
-        public Process GameProcess { get; private set; } = null;
+        public Process GameProcess { get; private set; } = null!;
         public IntPtr BaseAddress { get; private set; } = IntPtr.Zero;
         public int ModuleSize { get; private set; } = 0;
+        public bool UnsupportedBuild { get; private set; }
 
         public bool Attach(string processName, string moduleName)
         {
+            UnsupportedBuild = false;
             Process[] processes = Process.GetProcessesByName(processName);
             if (processes.Length == 0) return false;
 
@@ -67,6 +69,11 @@ namespace pvz_fusion_cheats_cs
                 {
                     if (module.ModuleName == moduleName)
                     {
+                        if (!PvzFusionTrainer.GameBuild.IsSupported(module.FileName))
+                        {
+                            UnsupportedBuild = true;
+                            break;
+                        }
                         BaseAddress = module.BaseAddress;
                         ModuleSize = module.ModuleMemorySize;
                         return true;

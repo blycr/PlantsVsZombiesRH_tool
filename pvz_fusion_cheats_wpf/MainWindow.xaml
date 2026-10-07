@@ -1,7 +1,7 @@
 <Window x:Class="pvz_fusion_cheats_wpf.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="PVZ Fusion 修改器 v7" Height="600" Width="680"
+        Title="PVZ Fusion 修改器 v10" Height="600" Width="680"
         WindowStyle="None" AllowsTransparency="True" Background="Transparent"
         WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
 
@@ -151,8 +151,8 @@
                 
                 <!-- Title & Connection Status -->
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="16,0,0,0">
-                    <TextBlock x:Name="Text_Title" Text="PVZ Fusion 3.6.1 修改器" Foreground="White" FontSize="16" FontWeight="Bold" VerticalAlignment="Center"/>
-                    <TextBlock x:Name="Text_SubTitle" Text="v7 GUI" Foreground="#FF3B82F6" FontSize="12" Margin="6,0,0,0" VerticalAlignment="Bottom" FontWeight="Medium"/>
+                    <TextBlock x:Name="Text_Title" Text="PVZ Fusion 4.0.5 修改器" Foreground="White" FontSize="16" FontWeight="Bold" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="Text_SubTitle" Text="v10 GUI" Foreground="#FF3B82F6" FontSize="12" Margin="6,0,0,0" VerticalAlignment="Bottom" FontWeight="Medium"/>
                     
                     <!-- Connected / Detached State -->
                     <Border x:Name="StatusDot" Width="8" Height="8" CornerRadius="4" Background="#FFEF4444" Margin="20,0,0,0" VerticalAlignment="Center"/>

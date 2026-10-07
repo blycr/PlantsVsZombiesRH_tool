@@ -1,4 +1,4 @@
-# 植物大战僵尸融合版 3.8.1 修改器
+# 植物大战僵尸融合版 4.0.5 修改器 v10
 
 [English](./README_EN.md) | [简体中文](./README.md)
 
@@ -8,13 +8,17 @@
 
 请只从本仓库 [GitHub Releases](https://github.com/blycr/PlantsVsZombiesRH_tool/releases) 下载。付费渠道或网盘二次打包均不可信。
 
-Release 中通常包含：
+当前版本：[v10 · 游戏 4.0.5](https://github.com/blycr/PlantsVsZombiesRH_tool/releases/tag/v10)。更新内容见 [更新日志](./CHANGELOG.md)。
 
-* `pvz_fusion_cheats_wpf.exe` — 图形界面（需 .NET 10）
-* `pvz_fusion_cheats_cs.exe` — 控制台（需 .NET 10）
+Release 包含：
+
+* `pvz_fusion_cheats_wpf.exe` — 图形界面（需 .NET Desktop Runtime 10，x64）
+* `pvz_fusion_cheats_cs.exe` — 控制台（需 .NET Runtime 10，x64）
 * `pvz_fusion_cheats.ct` — Cheat Engine 表
-* `pvz_fusion_cheats_v9.py` — Python 源码
-* `SHA256SUMS` — 文件校验清单（可选对照）
+* `pvz_fusion_cheats_v10.py` — Python 源码
+* `SHA256SUMS` — 四个附件的 SHA256 校验清单
+
+下载后可在 PowerShell 中执行 `Get-FileHash .\pvz_fusion_cheats_wpf.exe -Algorithm SHA256`，将结果与 `SHA256SUMS` 中同名文件的一行比较；其他附件同样校验。
 
 ---
 
@@ -24,13 +28,13 @@ Release 中通常包含：
 
 ### A. 图形界面（推荐）
 
-1. 安装 [.NET 10 运行库](https://dotnet.microsoft.com/download)（若尚未安装）。
+1. 安装 [.NET Desktop Runtime 10（Windows x64）](https://dotnet.microsoft.com/download/dotnet/10.0)（若尚未安装）。
 2. 运行 `pvz_fusion_cheats_wpf.exe`。
 3. 用开关打开/关闭功能，用滑块调节游戏速度。
 
 ### B. 控制台
 
-1. 安装 .NET 10 运行库。
+1. 安装 [.NET Runtime 10（Windows x64）](https://dotnet.microsoft.com/download/dotnet/10.0)。Desktop Runtime 也包含所需运行库。
 2. 运行 `pvz_fusion_cheats_cs.exe`。
 3. 按菜单提示输入数字开关功能。
 
@@ -42,12 +46,12 @@ Release 中通常包含：
 
 ### D. Python 源码
 
-1. 从 Release 下载 `pvz_fusion_cheats_v9.py`。
-2. 安装 Python 3.12（可用 [uv](https://github.com/astral-sh/uv)）。
+1. 从 Release 下载 `pvz_fusion_cheats_v10.py`。
+2. 安装 Python 3.12（可用 [uv](https://github.com/astral-sh/uv)），执行 `python -m pip install pymem` 安装依赖。缺少依赖时脚本会尝试联网安装。
 3. 进关卡后，在脚本所在目录执行：
 
 ```text
-python pvz_fusion_cheats_v9.py
+python pvz_fusion_cheats_v10.py
 ```
 
 ---
@@ -64,13 +68,25 @@ python pvz_fusion_cheats_v9.py
 | 6 | 特定植物加速 | 大嘴花咀嚼、地雷系列准备大幅加快 |
 | 7 | 游戏速率 | 0.1x–10.0x；过关后仍保持 |
 
+GUI 的“一键开启所有”和控制台的 `A` 开启前六项，游戏速率单独设置。控制台 `R` 还原、`Q` 还原并退出、`L` 切换语言；GUI 支持中英文切换和游戏重启后重新附加。
+
 ---
 
 ## 注意
 
-* 只改内存，不改存档；退出修改器后游戏恢复正常。
-* 仅适配《植物大战僵尸融合版 3.8.1》。
+* 只改内存，不改存档；C# / Python 正常关闭时尝试还原补丁。CE 请先取消勾选功能再关闭。强制结束修改器后可重启游戏恢复。
+* v10 仅适配《植物大战僵尸融合版 4.0.5》Windows x64。C# / Python 会校验本体构建，不匹配时拒绝附加；CE 表会校验补丁位置的原始指令。
+* 当前适配的 `GameAssembly.dll` SHA256：`48096b917ee6aaf6e35c95c98e666a4399a9e0c3d5adbab727cee941eccf2d42`。
 * 建议进关卡后再运行。
+* 已完成编译、隔离内存开关与还原测试、72 项汇编执行验证，以及 CE 指令和跳转校验；实际关卡效果、过关场景与 CE 内执行尚未实测。
+
+## 常见问题
+
+* **提示版本不匹配**：相同的游戏版本号也可能对应不同构建。对游戏目录的 `GameAssembly.dll` 执行 `Get-FileHash -Algorithm SHA256`，与上方适配值比较；不匹配的构建需要另行适配。
+* **提示缺少运行库**：GUI 需要 Desktop Runtime，且必须安装 x64 版本；仅安装普通 .NET Runtime 不足以运行 WPF 界面。
+* **无法附加或功能开启失败**：确认游戏已进入关卡，并只使用一个修改器。若游戏以管理员身份运行，修改器也需要同等权限。其他工具已改过补丁位置时，请重启游戏再试。
+
+源码构建与测试说明见 [BUILDING.md](./BUILDING.md)。仓库保存 C# 源码；Python、CE 表、可执行文件及校验清单通过 Release 分发。
 
 ---
 
